@@ -16,8 +16,14 @@ Including another URLconf
 from django.conf import settings
 from django.conf.urls.static import static
 from django.contrib import admin
-from django.urls import include, path
+from django.urls import path, re_path
+
+from products.views import CategoryCreateView, CategoryView, CategoryListView
+
 
 urlpatterns = [
     path('admin/', admin.site.urls),
+    path('', CategoryListView.as_view(), name='category_list'),
+    re_path(r'^categories/(?P<pk>\d+)/$', CategoryView.as_view(), name='category'),
+    path('categories/add/', CategoryCreateView.as_view(), name='create_category'),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

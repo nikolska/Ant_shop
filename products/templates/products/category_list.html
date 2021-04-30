@@ -1,0 +1,28 @@
+{% extends 'base.html' %}
+
+{% block title %}Categories{% endblock %}
+
+
+{% block content %}
+
+{% if object_list %}
+    <table>
+        {% for category in object_list %}
+            {% if forloop.counter0|divisibleby:4 %}
+                <tr>
+            {% endif %}
+                <td>
+                    <div class="card categories-grid">
+                        <img src="{{ category.image.url }}" class="card-img-top" alt="category-image">
+                        <a href="{% url 'category' category.pk %}"><h5 class="card-title" align='center'>{{ category.name }}</h5></a>
+                    </div>
+                </td>
+            {% if forloop.counter|divisibleby:4 %}
+                </tr>
+            {% endif %}
+        {% endfor %}
+        </tr>
+    </table>
+{% endif %}
+
+{% endblock %}
