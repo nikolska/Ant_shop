@@ -8,5 +8,27 @@
 <h1 align='center'>{{ category.name }}</h1>
 <p align='center'>{{ category.description }}</p>
 
+{% if products %}
+    <table>
+        {% for product in products %}
+            {% if forloop.counter0|divisibleby:4 %}
+                <tr>
+            {% endif %}
+                <td>
+                    <div class="card categories-grid">
+                        <img src="{{ product.image.url }}" class="card-img-top" alt="product-image">
+                        <a href="{% url 'product' product.pk %}">
+                            <h5 class="card-title" align='center'>{{ product.name }}</h5>
+                        </a>
+                    </div>
+                </td>
+            {% if forloop.counter|divisibleby:4 %}
+                </tr>
+            {% endif %}
+        {% endfor %}
+        </tr>
+    </table>
+{% endif %}
+
 {% endblock %}
 

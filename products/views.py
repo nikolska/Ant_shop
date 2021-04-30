@@ -8,7 +8,8 @@ from .models import Category, Product
 
 class CategoryCreateView(CreateView):
     model = Category
-    success_url = reverse_lazy('category')
+    form_class = CategoryForm
+    success_url = reverse_lazy('category_list')
 
 
 class CategoryListView(ListView):
@@ -18,4 +19,12 @@ class CategoryListView(ListView):
 class CategoryView(DetailView):
     model = Category
 
+    def get_context_data(self, **kwargs):
+        products = Product.objects.filter(category_id=self.kwargs['pk'])
+        ctx = super().get_context_data(**kwargs)
+        ctx["products"] = products
+        return ctx
 
+
+class ProductView(DetailView):
+    model = Product
