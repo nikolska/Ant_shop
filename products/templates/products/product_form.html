@@ -1,0 +1,41 @@
+{% extends 'base.html' %}
+
+{% block title %}Add new product{% endblock %}
+
+
+{% block content %}
+
+<form action="" method="POST" enctype="multipart/form-data">
+    {% csrf_token %}
+
+    <b>{{ form.name.label }}:</b> 
+    {{ form.name }}
+    <br>
+    <b>{{ form.description.label }}:</b> 
+    {{ form.description }}
+    <br>
+    <b>{{ form.subcategory.label }}:</b> 
+    {{ form.subcategory }}
+    <br>
+    <b>{{ form.price.label }}:</b> 
+    {{ form.price }}zł
+    <br>
+    <b>{{ form.code.label }}:</b> 
+    {{ form.code }}
+    <br>
+    <b>{{ form.rating.label }}:</b> 
+    {{ form.rating }}
+    <br>
+    <b>{{ form.availability.label }}:</b> 
+    {{ form.availability }}
+    <br>
+    <b>{{ form.image.label }}:</b> 
+    {{ form.image }}
+    <br>
+    <br>
+
+    <input type="submit" value="Add">
+</form>
+
+{% endblock %}
+

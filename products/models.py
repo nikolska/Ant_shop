@@ -21,8 +21,8 @@ class Subcategory(models.Model):
     name = models.CharField(max_length=255, unique=True)
     category = models.ForeignKey(Category, on_delete=models.CASCADE)
 
-    # def get_absolute_url(self):
-    #     return reverse('subcategory', args=[str(self.pk)])
+    def get_absolute_url(self):
+        return reverse('product_list', args=[str(self.pk)])
 
     def __str__(self):
         return self.name

@@ -2,7 +2,7 @@ from django.shortcuts import render
 from django.urls import reverse_lazy
 from django.views.generic import CreateView, DetailView, ListView
 
-from .forms import CategoryForm, SubcategoryForm
+from .forms import CategoryForm, ProductForm, SubcategoryForm
 from .models import Category, Product, Subcategory
 
 
@@ -20,6 +20,12 @@ class CategoryListView(ListView):
         ctx = super().get_context_data(**kwargs)
         ctx["subcategories"] = subcategories
         return ctx
+
+
+class ProductCreateView(CreateView):
+    model = Product
+    form_class = ProductForm
+    success_url = reverse_lazy('product_list')
 
 
 class ProductListView(ListView):

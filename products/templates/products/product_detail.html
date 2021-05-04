@@ -5,13 +5,15 @@
 
 {% block content %}
 
-<img src="{{ product.image.url }}" class="card-img-top" alt="product-image">
-<h1 align='center'>{{ product.name }}</h1>
-<p>description {{ product.description }}</p>
-<p>category {{ product.subcategory }}</p>
-<p>price {{ product.price }}</p>
-<p>code {{ product.code }}</p>
-<p>rating {{ product.rating }}</p>
-<p>availability {{ product.availability }}</p>
+<h1 align='center'>
+    <img src="{{ product.image.url }}" class="card-img-top" style="max-width: 500px;" alt="product-image"><br>
+    {{ product.name }} 
+</h1>
+<p><b>Description:</b> {{ product.description }}</p>
+<p><b>Category:</b> {{ product.subcategory }}</p>
+<p><b>Price:</b> {{ product.price }}</p>
+<p><b>Code:</b> {{ product.code }}</p>
+<p><b>Rating:</b> {{ product.rating }}</p>
+<p><b>Availability:</b> {{ product.availability }}</p>
 
 {% endblock %}
