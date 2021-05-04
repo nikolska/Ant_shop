@@ -19,15 +19,17 @@ from django.contrib import admin
 from django.urls import path, re_path
 
 from products.views import (
-    CategoryCreateView, CategoryView, CategoryListView, 
-    ProductView
+    CategoryCreateView, CategoryListView, 
+    ProductListView, ProductView,
+    SubcategoryCreateView
 )
 
 
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('', CategoryListView.as_view(), name='category_list'),
-    re_path(r'^categories/(?P<pk>\d+)/$', CategoryView.as_view(), name='category'),
     path('add-category/', CategoryCreateView.as_view(), name='create_category'),
-    re_path('^products/(?P<pk>\d+)/$', ProductView.as_view(), name='product'),
+    path('add-subcategory/', SubcategoryCreateView.as_view(), name='create_subcategory'),
+    re_path(r'^products/(?P<pk>\d+)/$', ProductView.as_view(), name='product'),
+    re_path(r'^subcategory/(?P<pk>\d+)/products/$', ProductListView.as_view(), name='product_list'),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

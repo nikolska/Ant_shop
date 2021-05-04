@@ -21,6 +21,12 @@ body {
     color: rgb(255, 255, 255);
     text-decoration: none;
 }
+.object-name {
+    font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
+    font-size: 27px;
+    text-align: center;
+    text-decoration: none;
+}
 .categories-grid {
     display: flex;
     justify-content: space-between;
@@ -34,4 +40,8 @@ body {
     max-width: 300px;
     padding: 10px;
     margin: 15px;
+}
+.subcategory-list {
+    color:rgb(0, 0, 0);
+    text-decoration: none;
 }

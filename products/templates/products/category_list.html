@@ -5,24 +5,30 @@
 
 {% block content %}
 
-{% if object_list %}
-    <table>
-        {% for category in object_list %}
-            {% if forloop.counter0|divisibleby:4 %}
-                <tr>
-            {% endif %}
-                <td>
-                    <div class="card categories-grid">
-                        <img src="{{ category.image.url }}" class="card-img-top" alt="category-image">
-                        <a href="{% url 'category' category.pk %}"><h5 class="card-title" align='center'>{{ category.name }}</h5></a>
-                    </div>
-                </td>
-            {% if forloop.counter|divisibleby:4 %}
-                </tr>
-            {% endif %}
-        {% endfor %}
-        </tr>
-    </table>
-{% endif %}
+<div class="row row-cols-1 row-cols-md-4 g-4">
+    {% for category in object_list %}
+        <div class="col">
+            <div class="card h-100">
+                <p align='center'>
+                    <img src="{{ category.image.url }}" style="max-width: 120px;" class="card-img-top" alt="category-image">
+                </p>
+                <div class="card-body">
+                    <h5 class="card-title object-name">{{ category.name }}</h5>
+                    <p class="card-text">
+                        {% if subcategories %}
+                            {% for subcategory in subcategories %}
+                                {% if subcategory.category == category %}
+                                    <li>
+                                        <a href="{% url 'product_list' subcategory.pk %}" class="subcategory-list">{{ subcategory.name }}</a>
+                                    </li>
+                                {% endif %}
+                            {% endfor %}
+                        {% endif %}
+                    </p>
+                </div>
+            </div>
+        </div>
+    {% endfor %}
+</div>
 
 {% endblock %}

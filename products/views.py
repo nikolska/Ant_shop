@@ -2,8 +2,8 @@ from django.shortcuts import render
 from django.urls import reverse_lazy
 from django.views.generic import CreateView, DetailView, ListView
 
-from .forms import CategoryForm
-from .models import Category, Product
+from .forms import CategoryForm, SubcategoryForm
+from .models import Category, Product, Subcategory
 
 
 class CategoryCreateView(CreateView):
@@ -15,12 +15,19 @@ class CategoryCreateView(CreateView):
 class CategoryListView(ListView):
     model = Category
 
+    def get_context_data(self, **kwargs):
+        subcategories = Subcategory.objects.all()
+        ctx = super().get_context_data(**kwargs)
+        ctx["subcategories"] = subcategories
+        return ctx
 
-class CategoryView(DetailView):
-    model = Category
+
+class ProductListView(ListView):
+    model = Subcategory
+    template_name = 'products/product_list.html'
 
     def get_context_data(self, **kwargs):
-        products = Product.objects.filter(category_id=self.kwargs['pk'])
+        products = Product.objects.filter(subcategory_id=self.kwargs['pk'])
         ctx = super().get_context_data(**kwargs)
         ctx["products"] = products
         return ctx
@@ -28,3 +35,10 @@ class CategoryView(DetailView):
 
 class ProductView(DetailView):
     model = Product
+
+
+class SubcategoryCreateView(CreateView):
+    model = Subcategory
+    form_class = SubcategoryForm
+    success_url = reverse_lazy('subcategory_list')
+

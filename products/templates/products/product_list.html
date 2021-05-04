@@ -1,0 +1,33 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ subcategory.name }}{% endblock %}
+
+
+{% block content %}
+
+<h1 align='center'>{{ subcategory.name }}</h1>
+
+<div class="row row-cols-1 row-cols-md-5 g-4">
+    {% if products %}
+        {% for product in products %}
+            <div class="col">
+                <div class="card h-100">
+                    <p align='center'>
+                        <img src="{{ product.image.url }}" style="max-width: 170px;" class="card-img-top" alt="product-image">
+                    </p>
+                    <div class="card-body">
+                        <a class="subcategory-list" href="{% url 'product' product.pk %}">
+                            <h5 class="card-title object-name">{{ product.name }}</h5>
+                        </a>
+                        <p class="card-text">
+                            <b>Price:</b> {{ product.price }}zł
+                        </p>
+                    </div>
+                </div>
+            </div>
+        {% endfor %}
+    {% endif %}
+</div>
+
+{% endblock %}
+
