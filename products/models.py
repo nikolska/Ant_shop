@@ -1,5 +1,6 @@
 from django.contrib.auth import get_user_model
 from django.contrib.contenttypes.models import ContentType
+from django.contrib.contenttypes.fields import GenericForeignKey
 from django.db import models
 from django.urls import reverse
 
@@ -20,9 +21,6 @@ class Category(models.Model):
     name = models.CharField(max_length=255, unique=True)
     slug = models.SlugField(unique=True)
 
-    def get_absolute_url(self):
-        return reverse('category', args=[str(self.pk)])
-
     def __str__(self):
         return self.name
     
@@ -35,9 +33,6 @@ class Subcategory(models.Model):
     name = models.CharField(max_length=255, unique=True)
     slug = models.SlugField(unique=True)
     category = models.ForeignKey(Category, on_delete=models.CASCADE)
-
-    def get_absolute_url(self):
-        return reverse('product_list', args=[str(self.pk)])
 
     def __str__(self):
         return self.name
@@ -63,13 +58,15 @@ class Product(models.Model):
     
 
     class Meta:
-        ordering = ['title']
+        abstract = True
 
 
 class CartProduct(models.Model):
     customer = models.ForeignKey(Customer, on_delete=models.CASCADE)
     card = models.ForeignKey('Cart', on_delete=models.CASCADE, related_name='related_products')
-    product = models.ForeignKey(Product, on_delete=models.CASCADE)
+    content_type = models.ForeignKey(ContentType, on_delete=models.CASCADE)
+    object_id = models.PositiveIntegerField()
+    content_object_id = GenericForeignKey('content_type', 'object_id')
     count = models.PositiveIntegerField(default=1)
     final_price = models.DecimalField(max_digits=9, decimal_places=2)
     
@@ -87,11 +84,28 @@ class Cart(models.Model):
             return f'{self.owner.user.full_name} Cart'
 
 
-class Specification(models.Model):
-    content_type = models.ForeignKey(ContentType, on_delete=models.CASCADE)
-    object_id = models.PositiveIntegerField()
-    product_title = models.CharField(max_length=255)
+class Ant(Product):
+    size = models.CharField(max_length=100)
+    coloration = models.CharField(max_length=100)
+    occurrence = models.CharField(max_length=255)
+    nesting = models.CharField(max_length=255)
 
     def __str__(self):
-            return f'Specification for {self.product_title}'
+        return self.name
+    
+    class Meta:
+        ordering = ['title']
+
+
+class Formicary(Product):
+    dimensions = models.CharField(max_length=255)
+    formicary_material = models.CharField(max_length=100)
+    additional_info = models.TextField()
+
+    def __str__(self):
+        return self.name
+    
+    class Meta:
+        ordering = ['title']
+        verbose_name_plural = 'Formicaries'
 
