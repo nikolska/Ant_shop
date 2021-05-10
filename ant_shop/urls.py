@@ -16,21 +16,22 @@ Including another URLconf
 from django.conf import settings
 from django.conf.urls.static import static
 from django.contrib import admin
-from django.urls import path, re_path
+from django.urls import include, path, re_path
 
-from products.views import (
-    CategoryCreateView, CategoryListView, 
-    ProductCreateView, ProductListView, ProductView,
-    SubcategoryCreateView
-)
+# from products.views import (
+#     CategoryCreateView, CategoryListView, 
+#     ProductCreateView, ProductListView, ProductView,
+#     SubcategoryCreateView
+# )
 
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('', CategoryListView.as_view(), name='category_list'),
-    path('add-category/', CategoryCreateView.as_view(), name='create_category'),
-    path('add-product/', ProductCreateView.as_view(), name='create_product'),
-    path('add-subcategory/', SubcategoryCreateView.as_view(), name='create_subcategory'),
-    re_path(r'^products/(?P<pk>\d+)/$', ProductView.as_view(), name='product'),
-    re_path(r'^subcategory/(?P<pk>\d+)/products/$', ProductListView.as_view(), name='product_list'),
+    # path('', CategoryListView.as_view(), name='category_list'),
+    # path('accounts/', include('allauth.urls')),
+    # path('add-category/', CategoryCreateView.as_view(), name='create_category'),
+    # path('add-product/', ProductCreateView.as_view(), name='create_product'),
+    # path('add-subcategory/', SubcategoryCreateView.as_view(), name='create_subcategory'),
+    # re_path(r'^products/(?P<pk>\d+)/$', ProductView.as_view(), name='product'),
+    # re_path(r'^subcategory/(?P<pk>\d+)/products/$', ProductListView.as_view(), name='product_list'),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
