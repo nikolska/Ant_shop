@@ -1,11 +1,12 @@
-# from django.shortcuts import render
+from django.shortcuts import render
 # from django.urls import reverse_lazy
 # from django.views.generic import CreateView, DetailView, ListView
 
 # from .forms import CategoryForm, ProductForm, SubcategoryForm
 # from .models import Category, Product, Subcategory
 
-
+def test_view(request):
+    return render(request, 'base.html')
 # class CategoryCreateView(CreateView):
 #     model = Category
 #     form_class = CategoryForm
