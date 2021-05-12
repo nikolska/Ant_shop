@@ -37,7 +37,6 @@ class FormicariesCategoryFilter(admin.SimpleListFilter):
             return queryset
 
 
-
 class ProductAdminForm(ModelForm):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)

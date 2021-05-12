@@ -1,12 +1,32 @@
 from django.shortcuts import render
 # from django.urls import reverse_lazy
-# from django.views.generic import CreateView, DetailView, ListView
+from django.views.generic import CreateView, DetailView, ListView, TemplateView
 
-# from .forms import CategoryForm, ProductForm, SubcategoryForm
-# from .models import Category, Product, Subcategory
+from .models import Ant, Category, Formicary, Product, Subcategory
+
 
 def test_view(request):
     return render(request, 'base.html')
+
+class HomePageView(TemplateView):
+    template_name = 'home_page.html'
+
+
+class ProductDetailView(DetailView):
+    CT_MODEL_MODEL_CLASS = {
+        'ants': Ant,
+        'formicaries': Formicary
+    }
+    context_object_name = 'product'
+    template_name = 'product_detail.html'
+    slug_url_kwarg = 'slug'
+
+    def dispatch(self, request, *args, **kwargs):
+        self.model = self.CT_MODEL_MODEL_CLASS[kwargs['ct_model']]
+        self.queryset = self.model._base_manager.all()
+        return super().dispatch(request, *args, **kwargs)
+
+
 # class CategoryCreateView(CreateView):
 #     model = Category
 #     form_class = CategoryForm
@@ -38,10 +58,6 @@ def test_view(request):
 #         ctx = super().get_context_data(**kwargs)
 #         ctx["products"] = products
 #         return ctx
-
-
-# class ProductView(DetailView):
-#     model = Product
 
 
 # class SubcategoryCreateView(CreateView):

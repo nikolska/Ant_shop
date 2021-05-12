@@ -10,8 +10,18 @@ from django.urls import reverse
 User = get_user_model()
 
 
+def get_product_url(object, viewname):
+    ct_model = object.__class__._meta.model_name
+    return reverse(viewname, kwargs={
+        'ct_model': ct_model,
+        'category': object.category,
+        'slug': object.slug
+    })
+
+
 class MinResolutionErrorException(Exception):
     pass
+
 
 class MaxResolutionErrorException(Exception):
     pass
@@ -143,6 +153,9 @@ class Ant(Product):
     
     class Meta:
         ordering = ['title']
+    
+    def get_absolute_url(self):
+        return get_product_url(self, 'product_detail')
 
 
 class Formicary(Product):
@@ -156,4 +169,7 @@ class Formicary(Product):
     class Meta:
         ordering = ['title']
         verbose_name_plural = 'Formicaries'
+    
+    def get_absolute_url(self):
+        return get_product_url(self, 'product_detail')
 
