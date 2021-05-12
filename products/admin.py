@@ -7,6 +7,37 @@ from django.utils.safestring import mark_safe
 from .models import Ant, Cart, CartProduct, Category, Customer, Formicary, Subcategory
 
 
+class AntsCategoryFilter(admin.SimpleListFilter):
+    title = 'category'
+    parameter_name = 'category'
+
+    def lookups(self, request, model_admin):
+        categories = Subcategory.objects.filter(slug__contains='ants')
+        return [(category.id, category.name) for category in categories]
+
+    def queryset(self, request, queryset):
+        if self.value():
+            return queryset.filter(category__id__exact=self.value())
+        else:
+            return queryset
+
+
+class FormicariesCategoryFilter(admin.SimpleListFilter):
+    title = 'category'
+    parameter_name = 'category'
+
+    def lookups(self, request, model_admin):
+        categories = Subcategory.objects.filter(slug__contains='formicaries')
+        return [(category.id, category.name) for category in categories]
+
+    def queryset(self, request, queryset):
+        if self.value():
+            return queryset.filter(category__id__exact=self.value())
+        else:
+            return queryset
+
+
+
 class ProductAdminForm(ModelForm):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -32,10 +63,9 @@ class ProductAdminForm(ModelForm):
 
 
 class AntAdmin(admin.ModelAdmin):
-    # CATEGORIES = [category.name for category in Subcategory.objects.filter(slug__contains='ants')]
     form = ProductAdminForm
     list_display = ('title', 'category', 'price', 'code', 'availability')
-    list_filter = ('availability', 'category')
+    list_filter = ('availability', AntsCategoryFilter)
     search_fields = ('title',)
     readonly_fields = ('get_image',)
 
@@ -53,7 +83,7 @@ class AntAdmin(admin.ModelAdmin):
 class FormicaryAdmin(admin.ModelAdmin):
     form = ProductAdminForm
     list_display = ('title', 'category', 'price', 'code', 'availability')
-    list_filter = ('availability', 'category')
+    list_filter = ('availability', FormicariesCategoryFilter)
     search_fields = ('title',)
     readonly_fields = ('get_image',)
 
