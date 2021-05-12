@@ -1,10 +1,30 @@
-{% extends 'base.html' %}
-
-{% block title %}{% endblock %}
-
-
-{% block content %}
-
-
-
-{% endblock %}
+<table class="table table-hover">
+    <thead>
+        <tr>
+          <th scope="col">Specifications</th>
+          <th scope="col"></th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td>Size</td>
+            <td>{{ product.size }}</td>
+        </tr>
+        <tr>
+            <td>Dimensions</td>
+            <td>{{ product.dimensions }}</td>
+        </tr>
+        <tr>
+            <td>Material</td>
+            <td>{{ product.formicary_material }}</td>
+        </tr>
+        <tr>
+            <td>Occurrence</td>
+            <td>{{ product.occurrence }}</td>
+        </tr>
+        <tr>
+            <td>Additional info</td>
+            <td>{{ product.additional_info }}</td>
+        </tr>
+    </tbody>
+</table>

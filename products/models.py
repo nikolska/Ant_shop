@@ -159,6 +159,7 @@ class Ant(Product):
 
 
 class Formicary(Product):
+    size = models.CharField(max_length=100)
     dimensions = models.CharField(max_length=255)
     formicary_material = models.CharField(max_length=100)
     additional_info = models.TextField()
