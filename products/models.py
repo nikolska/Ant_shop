@@ -165,7 +165,7 @@ class Formicary(Product):
     additional_info = models.TextField()
 
     def __str__(self):
-        return self.name
+        return self.title
     
     class Meta:
         ordering = ['title']

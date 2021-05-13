@@ -27,7 +27,7 @@
         <!-- Navigation-->
         <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
             <div class="container">
-                <a class="navbar-brand" href="#!">Ant Shop</a>
+                <a class="navbar-brand" href="{% url 'home_page' %}">Ant Shop</a>
                 <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarResponsive" 
                     aria-controls="navbarResponsive" aria-expanded="false" aria-label="Toggle navigation">
                     <span class="navbar-toggler-icon"></span>
@@ -49,9 +49,9 @@
                 <div class="col-lg-3">
                     <h1 class="my-4">Ant Shop</h1>
                     <div class="list-group">
-                        <a class="list-group-item" href="#!">Category 1</a>
-                        <a class="list-group-item" href="#!">Category 2</a>
-                        <a class="list-group-item" href="#!">Category 3</a>
+                        {% for category in categories %}
+                            <a class="list-group-item" href="#!">{{ category.name }}</a>
+                        {% endfor %}
                     </div>
                 </div>
                 <div class="col-lg-8">
@@ -62,7 +62,7 @@
         
         <!-- Footer-->
         <footer class="py-5 bg-dark">
-            <div class="container"><p class="m-0 text-center text-white">Copyright &copy; Your Website 2021</p></div>
+            <div class="container"><p class="m-0 text-center text-white">Copyright &copy; AnMa Production 2021</p></div>
         </footer>
 
         <!-- Bootstrap core JS-->

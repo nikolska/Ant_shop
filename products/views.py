@@ -1,12 +1,9 @@
-from django.shortcuts import render
+from django.shortcuts import get_list_or_404, render
 # from django.urls import reverse_lazy
 from django.views.generic import CreateView, DetailView, ListView, TemplateView
 
 from .models import Ant, Category, Formicary, Product, Subcategory
 
-
-def test_view(request):
-    return render(request, 'base.html')
 
 class HomePageView(TemplateView):
     template_name = 'home_page.html'
