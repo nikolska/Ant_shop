@@ -59,7 +59,10 @@
                                 <div class="dropdown-menu">
                                     {% for subcategory in subcategories %}
                                         {% if subcategory.category == category %}
-                                            <a class="dropdown-item" href="#!">{{ subcategory.name }}</a>
+                                            <a class="dropdown-item" 
+                                                href="{% url 'product_list' subcategory.category.slug subcategory.slug %}">
+                                                {{ subcategory.name }}
+                                            </a>
                                         {% endif %}
                                     {% endfor %}
                                 </div>

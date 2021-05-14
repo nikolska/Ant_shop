@@ -24,41 +24,17 @@ class ProductDetailView(DetailView):
         return super().dispatch(request, *args, **kwargs)
 
 
-# class CategoryCreateView(CreateView):
-#     model = Category
-#     form_class = CategoryForm
-#     success_url = reverse_lazy('category_list')
+class ProductListView(ListView):
+    CT_MODEL_MODEL_CLASS = {
+        'ants': Ant,
+        'formicaries': Formicary
+    }
+    template_name = 'product_list.html'
+    slug_url_kwarg = 'slug'
 
-
-# class CategoryListView(ListView):
-#     model = Category
-
-#     def get_context_data(self, **kwargs):
-#         subcategories = Subcategory.objects.all()
-#         ctx = super().get_context_data(**kwargs)
-#         ctx["subcategories"] = subcategories
-#         return ctx
-
-
-# class ProductCreateView(CreateView):
-#     model = Product
-#     form_class = ProductForm
-#     success_url = reverse_lazy('product_list')
-
-
-# class ProductListView(ListView):
-#     model = Subcategory
-#     template_name = 'products/product_list.html'
-
-#     def get_context_data(self, **kwargs):
-#         products = Product.objects.filter(subcategory_id=self.kwargs['pk'])
-#         ctx = super().get_context_data(**kwargs)
-#         ctx["products"] = products
-#         return ctx
-
-
-# class SubcategoryCreateView(CreateView):
-#     model = Subcategory
-#     form_class = SubcategoryForm
-#     success_url = reverse_lazy('subcategory_list')
+    def dispatch(self, request, *args, **kwargs):
+        model = self.CT_MODEL_MODEL_CLASS[kwargs['ct_model']]
+        self.model = Subcategory.objects.get(slug=kwargs['category'])
+        self.queryset = model.objects.filter(category=self.model)
+        return super().dispatch(request, *args, **kwargs)
 

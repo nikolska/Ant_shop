@@ -1,0 +1,33 @@
+{% extends 'base.html' %}
+
+
+{% block title %}{% endblock %}
+
+
+{% block content %}
+
+<div class="row mt-4">
+    {% for product in object_list %}
+       <div class="col-lg-4 col-md-6 mb-4">
+           <div class="card h-100">
+               <a href="{% url 'product_detail' product.category.category.slug product.category.slug product.slug %}">
+                   <img class="card-img-top" src="{{ product.image.url }}" alt="product-{{ product.title }}-image"/>
+               </a>
+               <div class="card-body">
+                   <h4 class="card-title">
+                       <a href="{% url 'product_detail' product.category.category.slug product.category.slug product.slug %}">
+                           {{ product.title }}
+                       </a>
+                   </h4>
+                   <h5>${{ product.price }}</h5>
+                   <p class="card-text">{{ product.description|truncatechars:80 }}</p>
+               </div>
+               <div class="card-footer"><small class="text-muted">{{ product.rating }} ★ ★ ★ ★ ☆</small></div>
+           </div>
+       </div>
+    {% empty %}
+       <h2>No products for this category.</h2>
+    {% endfor %}
+</div>
+
+{% endblock %}
