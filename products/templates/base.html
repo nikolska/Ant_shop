@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 {% load static %}
+
 <html lang="en">
     <head>
         <!-- Required meta tags -->
@@ -50,7 +51,19 @@
                     <h1 class="my-4">Ant Shop</h1>
                     <div class="list-group">
                         {% for category in categories %}
-                            <a class="list-group-item" href="#!">{{ category.name }}</a>
+                            <div class="btn-group dropright m-1">
+                                <button type="button" class="btn btn-secondary dropdown-toggle" data-toggle="dropdown" 
+                                    aria-haspopup="true" aria-expanded="false">
+                                    {{ category.name }}
+                                </button>
+                                <div class="dropdown-menu">
+                                    {% for subcategory in subcategories %}
+                                        {% if subcategory.category == category %}
+                                            <a class="dropdown-item" href="#!">{{ subcategory.name }}</a>
+                                        {% endif %}
+                                    {% endfor %}
+                                </div>
+                            </div>
                         {% endfor %}
                     </div>
                 </div>

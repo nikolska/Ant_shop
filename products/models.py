@@ -3,6 +3,7 @@ from PIL import Image
 from django.contrib.auth import get_user_model
 from django.contrib.contenttypes.models import ContentType
 from django.contrib.contenttypes.fields import GenericForeignKey
+from django.core.validators import MaxValueValidator, MinValueValidator
 from django.db import models
 from django.urls import reverse
 
@@ -58,7 +59,7 @@ class Customer(models.Model):
     address = models.CharField(max_length=255)
 
     def __str__(self):
-        return self.user.full_name
+        return f'{self.user.first_name} {self.user.last_name}'
 
 
 class Category(models.Model):
@@ -93,7 +94,7 @@ class Product(models.Model):
     category = models.ForeignKey(Subcategory, on_delete=models.CASCADE)
     price = models.DecimalField(max_digits=9, decimal_places=2)
     code = models.CharField(max_length=255, unique=True)
-    rating = models.FloatField(default=1.0)
+    rating = models.FloatField(default=1.0, validators=[MinValueValidator(0.0), MaxValueValidator(10)])
     availability = models.BooleanField(default=False)
     image = models.ImageField(upload_to='products/')
 
@@ -124,22 +125,24 @@ class CartProduct(models.Model):
     card = models.ForeignKey('Cart', on_delete=models.CASCADE, related_name='related_products')
     content_type = models.ForeignKey(ContentType, on_delete=models.CASCADE)
     object_id = models.PositiveIntegerField()
-    content_object_id = GenericForeignKey('content_type', 'object_id')
+    content_object = GenericForeignKey('content_type', 'object_id')
     count = models.PositiveIntegerField(default=1)
     final_price = models.DecimalField(max_digits=9, decimal_places=2)
     
     def __str__(self):
-            return f'{self.product.title} (for Cart)'
+            return f'{self.content_object.title} (for Cart)'
         
 
 class Cart(models.Model):
     owner = models.ForeignKey(Customer, on_delete=models.CASCADE)
     products = models.ManyToManyField(CartProduct, blank=True, related_name='related_cart')
     total_products = models.PositiveIntegerField(default=0)
-    final_price = models.DecimalField(max_digits=9, decimal_places=2)
+    final_price = models.DecimalField(default=0, max_digits=9, decimal_places=2)
+    in_order = models.BooleanField(default=False)
+    for_anonymous_user = models.BooleanField(default=False)
 
     def __str__(self):
-            return f'{self.owner.user.full_name} Cart'
+            return f'{self.owner} Cart'
 
 
 class Ant(Product):

@@ -45,6 +45,11 @@ class ProductAdminForm(ModelForm):
                 Minimum resolution for images: 400x400
             </span>
         ''')
+        self.fields['rating'].help_text = mark_safe('''
+            <span style="color: red">
+                Choose from 0 to 10.
+            </span>
+        ''')
 
     def clean_image(self):
         image = self.cleaned_data['image']
