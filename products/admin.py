@@ -40,6 +40,11 @@ class FormicariesCategoryFilter(admin.SimpleListFilter):
 class ProductAdminForm(ModelForm):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
+        self.fields['slug'].help_text = mark_safe('''
+            <span style="color: red">
+                The field can only contain letters, numbers, underscores or hyphens
+            </span>
+        ''')
         self.fields['image'].help_text = mark_safe('''
             <span style="color: red">
                 Minimum resolution for images: 400x400
@@ -47,7 +52,7 @@ class ProductAdminForm(ModelForm):
         ''')
         self.fields['rating'].help_text = mark_safe('''
             <span style="color: red">
-                Choose from 0 to 10.
+                Choose from 0 to 10
             </span>
         ''')
 
@@ -71,12 +76,18 @@ class AntAdmin(admin.ModelAdmin):
     list_display = ('title', 'category', 'price', 'code', 'availability')
     list_filter = ('availability', AntsCategoryFilter)
     search_fields = ('title',)
+    fields = (
+        'title', 'slug', 'description', 'category', 
+        'price', 'code', 'rating', 'availability', 
+        ('image', 'get_image'), 
+        'size','coloration', 'occurrence', 'nesting'
+    )
     readonly_fields = ('get_image',)
 
     def get_image(self, obj):
-        return mark_safe(f'<img src={obj.image.url} width="150" height="150">')
+        return mark_safe(f'<img src={obj.image.url} width="200" height="150">')
     
-    get_image.short_description = 'Image'
+    get_image.short_description = 'Preview'
 
     def formfield_for_foreignkey(self, db_field, request, **kwargs):
         if db_field.name == 'category':
@@ -89,12 +100,18 @@ class FormicaryAdmin(admin.ModelAdmin):
     list_display = ('title', 'category', 'price', 'code', 'availability')
     list_filter = ('availability', FormicariesCategoryFilter)
     search_fields = ('title',)
+    fields = (
+        'title', 'slug', 'description', 'category', 
+        'price', 'code', 'rating', 'availability', 
+        ('image', 'get_image'), 
+        'size','dimensions', 'formicary_material', 'additional_info'
+    )
     readonly_fields = ('get_image',)
 
     def get_image(self, obj):
-        return mark_safe(f'<img src={obj.image.url} width="150" height="150">')
+        return mark_safe(f'<img src={obj.image.url} width="200" height="150">')
 
-    get_image.short_description = 'Image'
+    get_image.short_description = 'Preview'
 
     def formfield_for_foreignkey(self, db_field, request, **kwargs):
         if db_field.name == 'category':
