@@ -1,0 +1,42 @@
+{% extends 'base.html' %}
+
+
+{% block title %}Cart{% endblock %}
+
+
+{% block content %}
+
+<h3 class="text-center mt-5 mb-5">
+    Your cart 
+    {% if not cart.products.count %} 
+        is empty 
+    {% endif %}
+</h3>
+
+<table class="table table-hover">
+    <thead align="center">
+      <tr>
+        <th scope="col">Product</th>
+        <th scope="col">Product image</th>
+        <th scope="col">Price</th>
+        <th scope="col">Quantity</th>
+        <th scope="col">Total price</th>
+      </tr>
+    </thead>
+    <tbody>
+        {% for product in cart.products.all %}
+            <tr>
+                <td>{{ product.content_object.title }}</td>
+                <td class="w-25">
+                    <img src="{{ product.content_object.image.url }}" class="img-fluid" alt="product image">
+                </td>
+                <td>{{ product.content_object.price }}</td>
+                <td>{{ product.count }}</td>
+                <td>{{ product.final_price }}</td>
+            </tr>
+        {% endfor %}
+    </tbody>
+  </table>
+
+
+{% endblock %}

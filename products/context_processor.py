@@ -1,12 +1,14 @@
 from django.shortcuts import get_list_or_404
 
-from .models import Ant, Category, Formicary, Subcategory
+from .models import Cart, Category, Customer, LatestProducts, Subcategory
 
 
 def base_page_info(request):
+    customer = Customer.objects.get(user=request.user)
     ctx = {
+        'cart': Cart.objects.get(owner=customer, in_order=False),
         'categories': get_list_or_404(Category),
         'subcategories': get_list_or_404(Subcategory),
-        'products': get_list_or_404(Ant) + get_list_or_404(Formicary),
+        'products': LatestProducts.objects.get_products_for_main_page('ant', 'formicary'),
     }
     return ctx

@@ -12,10 +12,9 @@ User = get_user_model()
 
 
 def get_product_url(object, viewname):
-    ct_model = object.__class__._meta.model_name
     return reverse(viewname, kwargs={
-        'ct_model': ct_model,
-        'category': object.category,
+        'ct_model': object.category.category.slug,
+        'category': object.category.slug,
         'slug': object.slug
     })
 
@@ -59,7 +58,7 @@ class Customer(models.Model):
     address = models.CharField(max_length=255)
 
     def __str__(self):
-        return f'{self.user.first_name} {self.user.last_name}'
+        return f'{self.user.pk}'
 
 
 class Category(models.Model):
@@ -115,19 +114,18 @@ class Product(models.Model):
         
         super().save(*args, **kwargs)
     
-
     class Meta:
         abstract = True
 
 
 class CartProduct(models.Model):
     customer = models.ForeignKey(Customer, on_delete=models.CASCADE)
-    card = models.ForeignKey('Cart', on_delete=models.CASCADE, related_name='related_products')
+    cart = models.ForeignKey('Cart', on_delete=models.CASCADE, related_name='related_products')
     content_type = models.ForeignKey(ContentType, on_delete=models.CASCADE)
     object_id = models.PositiveIntegerField()
     content_object = GenericForeignKey('content_type', 'object_id')
     count = models.PositiveIntegerField(default=1)
-    final_price = models.DecimalField(max_digits=9, decimal_places=2)
+    final_price = models.DecimalField(max_digits=9, decimal_places=2, )
     
     def __str__(self):
             return f'{self.content_object.title} (for Cart)'

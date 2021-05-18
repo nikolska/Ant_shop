@@ -30,9 +30,13 @@
                 &#9746;
             {% endif %}
         </p>
-        <p><b>Description:</b> {{ product.description }}</p>
     </div>
     <div class="mt-2 md-4">
+        <p class="mt-2 mb-2" align="justify"><b>Description:</b> {{ product.description }}</p>
+        <a class="nav justify-content-end mt-2 mb-2" 
+            href="{% url 'add_to_cart' product.category.category.slug product.category.slug product.slug %}">
+            <button class="btn btn-danger">Add to cart</button>
+        </a>
         {{ product|product_specification }}
     </div>
 </div>
