@@ -1,12 +1,18 @@
 from django.contrib.contenttypes.models import ContentType
 from django.http import HttpResponseRedirect
-from django.shortcuts import render
-from django.views.generic import DetailView, ListView, TemplateView, View
+from django.shortcuts import get_list_or_404, render
+from django.views.generic import DetailView, ListView, View
 
-from .models import Ant, Cart, CartProduct, Customer, Formicary, Subcategory
+from .mixins import CartMixin
+from .models import Ant, CartProduct, Category, LatestProducts, Formicary, Subcategory
 
 
-class AddToCartView(View):
+CT_MODEL_MODEL_CLASS = {
+    'ants': Ant,
+    'formicaries': Formicary
+}
+
+class AddToCartView(CartMixin, View):
     CT_MODEL_MODEL_CLASS = {
         'ants': 'ant',
         'formicaries': 'formicary'
@@ -15,44 +21,44 @@ class AddToCartView(View):
     def get(self, request, *args, **kwargs):
         ct_model = self.CT_MODEL_MODEL_CLASS[kwargs['ct_model']]
         product_slug = kwargs.get('slug')
-        customer = Customer.objects.get(user=request.user)
-        cart = Cart.objects.get(owner=customer, in_order=False)
         content_type = ContentType.objects.get(model=ct_model)
         product = content_type.model_class().objects.get(slug=product_slug)
         cart_product, created = CartProduct.objects.get_or_create(
-            customer=cart.owner,
-            cart=cart,
+            customer=self.cart.owner,
+            cart=self.cart,
             content_type=content_type,
-            object_id=product.id, 
-            final_price=product.price
+            object_id=product.id
         )
-        cart.products.add(cart_product)
+        if created:
+            self.cart.products.add(cart_product)
         return HttpResponseRedirect('/cart/')
 
 
-class CartView(View):
+class CartView(CartMixin, View):
     def get(self, request, *args, **kwargs):
-        customer = Customer.objects.get(user=request.user)
-        cart = Cart.objects.get(owner=customer)
-        ctx = {'cart': cart}
+        ctx = {'cart': self.cart}
         return render(request, 'cart_view.html', ctx)
 
 
-class HomePageView(TemplateView):
-    template_name = 'home_page.html'
+class HomePageView(CartMixin, View):
+    def get(self, request, *args, **kwargs):
+        ctx = {
+            'cart': self.cart,
+            'categories': get_list_or_404(Category),
+            'products': LatestProducts.objects.get_products_for_main_page('ant', 'formicary'),
+            'subcategories': get_list_or_404(Subcategory),  
+        }
+        return render(request, 'base.html', ctx)
 
 
-class ProductDetailView(DetailView):
-    CT_MODEL_MODEL_CLASS = {
-        'ants': Ant,
-        'formicaries': Formicary
-    }
+
+class ProductDetailView(CartMixin, DetailView):
     context_object_name = 'product'
     template_name = 'product_detail.html'
     slug_url_kwarg = 'slug'
 
     def dispatch(self, request, *args, **kwargs):
-        self.model = self.CT_MODEL_MODEL_CLASS[kwargs['ct_model']]
+        self.model = CT_MODEL_MODEL_CLASS[kwargs['ct_model']]
         self.queryset = self.model._base_manager.all()
         return super().dispatch(request, *args, **kwargs)
     
@@ -62,16 +68,12 @@ class ProductDetailView(DetailView):
         return ctx
 
 
-class ProductListView(ListView):
-    CT_MODEL_MODEL_CLASS = {
-        'ants': Ant,
-        'formicaries': Formicary
-    }
+class ProductListView(CartMixin, ListView):
     template_name = 'product_list.html'
     slug_url_kwarg = 'slug'
 
     def dispatch(self, request, *args, **kwargs):
-        model = self.CT_MODEL_MODEL_CLASS[kwargs['ct_model']]
+        model = CT_MODEL_MODEL_CLASS[kwargs['ct_model']]
         self.model = Subcategory.objects.get(slug=kwargs['category'])
         self.queryset = model.objects.filter(category=self.model)
         return super().dispatch(request, *args, **kwargs)

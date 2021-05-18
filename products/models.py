@@ -54,8 +54,8 @@ class LatestProducts:
 
 class Customer(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
-    phone = models.CharField(max_length=20)
-    address = models.CharField(max_length=255)
+    phone = models.CharField(max_length=20, null=True, blank=True)
+    address = models.CharField(max_length=255, null=True, blank=True)
 
     def __str__(self):
         return f'{self.user.pk}'
@@ -129,10 +129,14 @@ class CartProduct(models.Model):
     
     def __str__(self):
             return f'{self.content_object.title} (for Cart)'
+    
+    def save(self, *args, **kwargs):
+        self.final_price = self.count * self.content_object.price
+        super().save(*args, **kwargs)
         
 
 class Cart(models.Model):
-    owner = models.ForeignKey(Customer, on_delete=models.CASCADE)
+    owner = models.ForeignKey(Customer, on_delete=models.CASCADE, null=True)
     products = models.ManyToManyField(CartProduct, blank=True, related_name='related_cart')
     total_products = models.PositiveIntegerField(default=0)
     final_price = models.DecimalField(default=0, max_digits=9, decimal_places=2)
