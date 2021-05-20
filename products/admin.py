@@ -1,40 +1,10 @@
 from PIL import Image
 
 from django.contrib import admin
-from django.forms import ModelChoiceField, ModelForm, ValidationError
+from django.forms import ModelForm, ValidationError
 from django.utils.safestring import mark_safe
 
-from .models import Ant, Cart, CartProduct, Category, Customer, Formicary, Subcategory
-
-
-class AntsCategoryFilter(admin.SimpleListFilter):
-    title = 'category'
-    parameter_name = 'category'
-
-    def lookups(self, request, model_admin):
-        categories = Subcategory.objects.filter(slug__contains='ants')
-        return [(category.id, category.name) for category in categories]
-
-    def queryset(self, request, queryset):
-        if self.value():
-            return queryset.filter(category__id__exact=self.value())
-        else:
-            return queryset
-
-
-class FormicariesCategoryFilter(admin.SimpleListFilter):
-    title = 'category'
-    parameter_name = 'category'
-
-    def lookups(self, request, model_admin):
-        categories = Subcategory.objects.filter(slug__contains='formicaries')
-        return [(category.id, category.name) for category in categories]
-
-    def queryset(self, request, queryset):
-        if self.value():
-            return queryset.filter(category__id__exact=self.value())
-        else:
-            return queryset
+from .models import Cart, Category, Customer, Product, Specification, Subcategory
 
 
 class ProductAdminForm(ModelForm):
@@ -71,17 +41,11 @@ class ProductAdminForm(ModelForm):
         return image
 
 
-class AntAdmin(admin.ModelAdmin):
+class ProductAdmin(admin.ModelAdmin):
     form = ProductAdminForm
     list_display = ('title', 'category', 'price', 'code', 'availability')
-    list_filter = ('availability', AntsCategoryFilter)
+    list_filter = ('availability', 'category')
     search_fields = ('title',)
-    fields = (
-        'title', 'slug', 'description', 'category', 
-        'price', 'code', 'rating', 'availability', 
-        ('image', 'get_image'), 
-        'size','coloration', 'occurrence', 'nesting'
-    )
     readonly_fields = ('get_image',)
 
     def get_image(self, obj):
@@ -89,40 +53,10 @@ class AntAdmin(admin.ModelAdmin):
     
     get_image.short_description = 'Preview'
 
-    def formfield_for_foreignkey(self, db_field, request, **kwargs):
-        if db_field.name == 'category':
-            return ModelChoiceField(Subcategory.objects.filter(slug__contains='ants'))
-        return super().formfiled_for_foreignkey(db_field, request, **kwargs)
 
-
-class FormicaryAdmin(admin.ModelAdmin):
-    form = ProductAdminForm
-    list_display = ('title', 'category', 'price', 'code', 'availability')
-    list_filter = ('availability', FormicariesCategoryFilter)
-    search_fields = ('title',)
-    fields = (
-        'title', 'slug', 'description', 'category', 
-        'price', 'code', 'rating', 'availability', 
-        ('image', 'get_image'), 
-        'size','dimensions', 'formicary_material', 'additional_info'
-    )
-    readonly_fields = ('get_image',)
-
-    def get_image(self, obj):
-        return mark_safe(f'<img src={obj.image.url} width="200" height="150">')
-
-    get_image.short_description = 'Preview'
-
-    def formfield_for_foreignkey(self, db_field, request, **kwargs):
-        if db_field.name == 'category':
-            return ModelChoiceField(Subcategory.objects.filter(slug__contains='formicaries'))
-        return super().formfiled_for_foreignkey(db_field, request, **kwargs)
-
-
-admin.site.register(Ant, AntAdmin)
 admin.site.register(Cart)
-admin.site.register(CartProduct)
 admin.site.register(Category)
 admin.site.register(Customer)
-admin.site.register(Formicary, FormicaryAdmin)
+admin.site.register(Product, ProductAdmin)
+admin.site.register(Specification)
 admin.site.register(Subcategory)

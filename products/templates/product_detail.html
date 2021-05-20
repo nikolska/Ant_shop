@@ -33,14 +33,56 @@
     </div>
     <div class="mt-2 md-4">
         <p class="mt-2 mb-2" align="justify"><b>Description:</b> {{ product.description }}</p>
-        <a class="nav justify-content-end mt-2 mb-2" 
-            href="{% url 'add_to_cart' product.category.category.slug product.category.slug product.slug %}">
-            <button class="btn btn-danger">Add to cart</button>
-        </a>
-        {{ product|product_specification }}
+        {% if product.availability %}
+            <a class="nav justify-content-end mt-2 mb-2" 
+                href="">
+                <button class="btn btn-danger">Add to cart</button>
+            </a>
+        {% else %}
+            <a class="nav justify-content-end mt-2 mb-2" href="">
+                <button class="btn btn-danger">Inform me about product availability</button>
+            </a>
+        {% endif %}
+            <table class="table table-hover">
+                <thead>
+                    <tr>
+                        <th scope="col"><h4>Specifications</h4></th>
+                        <th scope="col"></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>size</td>
+                        <td>{{ product.specification.size }}</td>
+                    </tr>
+                    <tr>
+                        <td>coloration</td>
+                        <td>{{ product.specification.coloration }}</td>
+                    </tr>
+                    <tr>
+                        <td>occurrence</td>
+                        <td>{{ product.specification.occurrence }}</td>
+                    </tr>
+                    <tr>
+                        <td>nesting</td>
+                        <td>{{ product.specification.nesting }}</td>
+                    </tr>
+                    <tr>
+                        <td>dimensions</td>
+                        <td>{{ product.specification.dimensions }}</td>
+                    </tr>
+                    <tr>
+                        <td>material</td>
+                        <td>{{ product.specification.material }}</td>
+                    </tr>
+                    <tr>
+                        <td>additional_info</td>
+                        <td>{{ product.specification.additional_info }}</td>
+                    </tr>
+                </tbody>
+            </table>
+
     </div>
 </div>
 
 {% endblock %}
-
-

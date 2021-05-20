@@ -1,20 +1,17 @@
 from PIL import Image
 
 from django.contrib.auth import get_user_model
-from django.contrib.contenttypes.models import ContentType
-from django.contrib.contenttypes.fields import GenericForeignKey
 from django.core.validators import MaxValueValidator, MinValueValidator
 from django.db import models
 from django.urls import reverse
-
 
 User = get_user_model()
 
 
 def get_product_url(object, viewname):
     return reverse(viewname, kwargs={
-        'ct_model': object.category.category.slug,
-        'category': object.category.slug,
+        'category': object.category.category.slug,
+        'subcategory': object.category.slug,
         'slug': object.slug
     })
 
@@ -27,38 +24,16 @@ class MaxResolutionErrorException(Exception):
     pass
 
 
-class LatestProductsManager:
-
-    @staticmethod
-    def get_products_for_main_page(*args, **kwargs):
-        with_respect_to = kwargs.get('with_respect_to')
-        products = []
-        ct_models = ContentType.objects.filter(model__in=args)
-
-        for ct_model in ct_models:
-            model_products = ct_model.model_class()._base_manager.all().order_by('-id')[:5]
-            products.extend(model_products)
-
-        if with_respect_to:
-            ct_model = ContentType.objects.filter(model__in=with_respect_to)
-            if ct_model.exists():
-                if with_respect_to in args:
-                    return sorted(products, key=lambda x: x.__class__._meta.model_name.startswith(with_respect_to), reverse=True)
-        
-        return products
-
-
-class LatestProducts:
-    objects = LatestProductsManager()
-
-
 class Customer(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     phone = models.CharField(max_length=20, null=True, blank=True)
     address = models.CharField(max_length=255, null=True, blank=True)
 
+    def full_name(self):
+        return f'{self.user.first_name} {self.user.last_name}'
+
     def __str__(self):
-        return f'{self.user.pk}'
+        return f'{self.full_name}'
 
 
 class Category(models.Model):
@@ -86,16 +61,31 @@ class Subcategory(models.Model):
         verbose_name_plural = 'Subcategories'
 
 
+class Specification(models.Model):
+    size = models.CharField(max_length=100, blank=True)
+    coloration = models.CharField(max_length=100, blank=True)
+    occurrence = models.CharField(max_length=255, blank=True)
+    nesting = models.CharField(max_length=255, blank=True)
+    dimensions = models.CharField(max_length=255, blank=True)
+    material = models.CharField(max_length=100, blank=True)
+    additional_info = models.TextField(blank=True)
+    
+    def __str__(self):
+        return f'{self.pk}'
+
+
 class Product(models.Model):
     title = models.CharField(max_length=255)
     slug = models.SlugField(unique=True)
     description = models.TextField()
     category = models.ForeignKey(Subcategory, on_delete=models.CASCADE)
     price = models.DecimalField(max_digits=9, decimal_places=2)
+    specification = models.ForeignKey(Specification, on_delete=models.CASCADE, null=True)
     code = models.CharField(max_length=255, unique=True)
     rating = models.FloatField(default=1.0, validators=[MinValueValidator(0.0), MaxValueValidator(10)])
     availability = models.BooleanField(default=False)
     image = models.ImageField(upload_to='products/')
+    creation_date = models.DateField(auto_now=True)
 
     def __str__(self):
         return self.title
@@ -115,67 +105,20 @@ class Product(models.Model):
         super().save(*args, **kwargs)
     
     class Meta:
-        abstract = True
-
-
-class CartProduct(models.Model):
-    customer = models.ForeignKey(Customer, on_delete=models.CASCADE)
-    cart = models.ForeignKey('Cart', on_delete=models.CASCADE, related_name='related_products')
-    content_type = models.ForeignKey(ContentType, on_delete=models.CASCADE)
-    object_id = models.PositiveIntegerField()
-    content_object = GenericForeignKey('content_type', 'object_id')
-    count = models.PositiveIntegerField(default=1)
-    final_price = models.DecimalField(max_digits=9, decimal_places=2, )
+        ordering = ['title']
     
-    def __str__(self):
-            return f'{self.content_object.title} (for Cart)'
-    
-    def save(self, *args, **kwargs):
-        self.final_price = self.count * self.content_object.price
-        super().save(*args, **kwargs)
-        
+    def get_absolute_url(self):
+        return get_product_url(self, 'product_detail')
+
 
 class Cart(models.Model):
-    owner = models.ForeignKey(Customer, on_delete=models.CASCADE, null=True)
-    products = models.ManyToManyField(CartProduct, blank=True, related_name='related_cart')
+    owner = models.ForeignKey(Customer, on_delete=models.RESTRICT, null=True)
+    products = models.ManyToManyField(Product, blank=True)
     total_products = models.PositiveIntegerField(default=0)
     final_price = models.DecimalField(default=0, max_digits=9, decimal_places=2)
     in_order = models.BooleanField(default=False)
     for_anonymous_user = models.BooleanField(default=False)
 
     def __str__(self):
-            return f'{self.owner} Cart'
-
-
-class Ant(Product):
-    size = models.CharField(max_length=100)
-    coloration = models.CharField(max_length=100)
-    occurrence = models.CharField(max_length=255)
-    nesting = models.CharField(max_length=255)
-
-    def __str__(self):
-        return self.title
-    
-    class Meta:
-        ordering = ['title']
-    
-    def get_absolute_url(self):
-        return get_product_url(self, 'product_detail')
-
-
-class Formicary(Product):
-    size = models.CharField(max_length=100)
-    dimensions = models.CharField(max_length=255)
-    formicary_material = models.CharField(max_length=100)
-    additional_info = models.TextField()
-
-    def __str__(self):
-        return self.title
-    
-    class Meta:
-        ordering = ['title']
-        verbose_name_plural = 'Formicaries'
-    
-    def get_absolute_url(self):
-        return get_product_url(self, 'product_detail')
+            return f'Cart of {self.owner}'
 

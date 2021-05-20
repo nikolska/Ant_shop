@@ -13,17 +13,18 @@
     {% endif %}
 </h3>
 
-<table class="table table-hover">
-    <thead align="center">
-      <tr>
-        <th scope="col">Product</th>
-        <th scope="col">Product image</th>
-        <th scope="col">Price</th>
-        <th scope="col">Quantity</th>
-        <th scope="col">Total price</th>
-      </tr>
-    </thead>
-    <tbody>
+{% if cart.products.count > 0 %} 
+    <table class="table table-hover">
+        <thead align="center">
+            <tr>
+                <th scope="col">Product</th>
+                <th scope="col">Product image</th>
+                <th scope="col">Price</th>
+                <th scope="col">Quantity</th>
+                <th scope="col">Total price</th>
+            </tr>
+        </thead>
+        <tbody>
         {% for product in cart.products.all %}
             <tr>
                 <td>{{ product.content_object.title }}</td>
@@ -35,8 +36,10 @@
                 <td>{{ product.final_price }}</td>
             </tr>
         {% endfor %}
-    </tbody>
-  </table>
+        </tbody>
+    </table>
+{% endif %}
+
 
 
 {% endblock %}
