@@ -1,6 +1,6 @@
 from django.contrib.auth.models import Permission
 from django.http import HttpResponseRedirect
-from django.urls import reverse_lazy
+from django.urls import reverse, reverse_lazy
 from django.views.generic import CreateView, DetailView, ListView, TemplateView
 
 from .forms import CustomerCreateForm
@@ -40,7 +40,7 @@ class CustomerCreateView(CreateView):
     model = Customer
     form_class = CustomerCreateForm
     template_name = 'customer_create.html'
-    success_url = reverse_lazy('login')
+    # success_url = reverse_lazy('login')
 
     def form_valid(self, form):
         first_name = form.cleaned_data['first_name']
@@ -65,7 +65,6 @@ class CustomerCreateView(CreateView):
         customer.set_password(password)
         customer.user_permissions.add(permission)
         customer.save()
-        breakpoint()
 
-        return HttpResponseRedirect(self.get_success_url()) #выдает ошибку, не перенапрвляет на нужную страницу
+        return HttpResponseRedirect('/account/login/')
 
