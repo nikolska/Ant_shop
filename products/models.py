@@ -1,11 +1,9 @@
 from PIL import Image
 
-from django.contrib.auth import get_user_model
+from django.contrib.auth.models import AbstractUser
 from django.core.validators import MaxValueValidator, MinValueValidator
 from django.db import models
 from django.urls import reverse
-
-User = get_user_model()
 
 
 def get_product_url(object, viewname):
@@ -24,16 +22,13 @@ class MaxResolutionErrorException(Exception):
     pass
 
 
-class Customer(models.Model):
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
+class Customer(AbstractUser):
     phone = models.CharField(max_length=20, null=True, blank=True)
     address = models.CharField(max_length=255, null=True, blank=True)
 
+    @property
     def full_name(self):
-        return f'{self.user.first_name} {self.user.last_name}'
-
-    def __str__(self):
-        return f'{self.full_name}'
+        return {self.first_name}
 
 
 class Category(models.Model):
@@ -61,26 +56,12 @@ class Subcategory(models.Model):
         verbose_name_plural = 'Subcategories'
 
 
-class Specification(models.Model):
-    size = models.CharField(max_length=100, blank=True)
-    coloration = models.CharField(max_length=100, blank=True)
-    occurrence = models.CharField(max_length=255, blank=True)
-    nesting = models.CharField(max_length=255, blank=True)
-    dimensions = models.CharField(max_length=255, blank=True)
-    material = models.CharField(max_length=100, blank=True)
-    additional_info = models.TextField(blank=True)
-    
-    def __str__(self):
-        return f'{self.pk}'
-
-
 class Product(models.Model):
     title = models.CharField(max_length=255)
     slug = models.SlugField(unique=True)
     description = models.TextField()
     category = models.ForeignKey(Subcategory, on_delete=models.CASCADE)
-    price = models.DecimalField(max_digits=9, decimal_places=2)
-    specification = models.ForeignKey(Specification, on_delete=models.CASCADE, null=True)
+    price = models.DecimalField(max_digits=9, decimal_places=2, default=0)
     code = models.CharField(max_length=255, unique=True)
     rating = models.FloatField(default=1.0, validators=[MinValueValidator(0.0), MaxValueValidator(10)])
     availability = models.BooleanField(default=False)

@@ -42,6 +42,13 @@ INSTALLED_APPS = [
     'products',
 ]
 
+
+AUTH_USER_MODEL = 'products.Customer'
+
+LOGIN_REDIRECT_URL = 'home_page'
+LOGOUT_REDIRECT_URL = 'home_page'
+
+
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'whitenoise.middleware.WhiteNoiseMiddleware',
@@ -55,7 +62,7 @@ MIDDLEWARE = [
 
 ROOT_URLCONF = 'ant_shop.urls'
 
-SITE_ID = 1
+SITE_ID = 2
 
 TEMPLATES = [
     {

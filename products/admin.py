@@ -4,7 +4,22 @@ from django.contrib import admin
 from django.forms import ModelForm, ValidationError
 from django.utils.safestring import mark_safe
 
-from .models import Cart, Category, Customer, Product, Specification, Subcategory
+from .models import Cart, Category, Customer, Product, Subcategory
+
+
+class ProductCategoryFilter(admin.SimpleListFilter):
+    title = ' main category'
+    parameter_name = 'category'
+
+    def lookups(self, request, model_admin):
+        categories = Category.objects.all()
+        return [(category.id, category.name) for category in categories]
+
+    def queryset(self, request, queryset):
+        if self.value():
+            return queryset.filter(category__id__exact=self.value())
+        else:
+            return queryset
 
 
 class ProductAdminForm(ModelForm):
@@ -43,20 +58,23 @@ class ProductAdminForm(ModelForm):
 
 class ProductAdmin(admin.ModelAdmin):
     form = ProductAdminForm
-    list_display = ('title', 'category', 'price', 'code', 'availability')
-    list_filter = ('availability', 'category')
+    list_display = ('title', 'category', 'price', 'code', 'availability', 'get_small_image')
+    list_filter = ('availability', ProductCategoryFilter, 'category')
     search_fields = ('title',)
     readonly_fields = ('get_image',)
 
     def get_image(self, obj):
-        return mark_safe(f'<img src={obj.image.url} width="200" height="150">')
+        return mark_safe(f'<img src={obj.image.url} width="250" height="150">')
+    
+    def get_small_image(self, obj):
+        return mark_safe(f'<img src={obj.image.url} width="130" height="70">')
     
     get_image.short_description = 'Preview'
+    get_small_image.short_description = 'Image'
 
 
 admin.site.register(Cart)
 admin.site.register(Category)
 admin.site.register(Customer)
 admin.site.register(Product, ProductAdmin)
-admin.site.register(Specification)
 admin.site.register(Subcategory)
