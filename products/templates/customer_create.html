@@ -5,18 +5,19 @@
 
 {% block content %}
 
-<h2 align="center">Registration</h2><br>
-
-<div align="center">
+<div class="mt-4 mb-4" align="center">
     <form method="POST">
         {% csrf_token %}
 
+        <div class="form-floating mb-3">
+            {{ form.first_name }}
+            <label for="floatingInput">First name</label>
+        </div>
 
-        <b>{{ form.first_name.label }} and {{ form.last_name.label }}:</b>
-        {{ form.first_name }}
-        {{ form.last_name }}
-
-        <br><br>
+        <div class="form-floating mb-3">
+            {{ form.last_name }}
+            <label for="floatingInput">Last name</label>
+        </div>
 
         {% if form.username.errors %}
             {% for error in form.username.errors %}
@@ -24,12 +25,10 @@
             {% endfor %}
         {% endif %}
 
-        <b>{{ form.username.label }}:</b>
-        {{ form.username }}
-
-        <div id="passwordHelpBlock" class="form-text">
-            150 characters or fewer. Letters, digits and @/./+/-/_ only.
-        </div><br>
+        <div class="form-floating mb-3">
+            {{ form.username }}
+            <label for="floatingInput">Username</label>
+        </div>
 
         {% if form.email.errors %}
             {% for error in form.email.errors %}
@@ -37,20 +36,20 @@
             {% endfor %}
         {% endif %}
 
-        <b>{{ form.email.label }}:</b>
-        {{ form.email }}
+        <div class="form-floating mb-3">
+            {{ form.email }}
+            <label for="floatingInput">Email</label>
+        </div>
 
-        <br><br>
-
-        <b>{{ form.phone.label }}:</b>
-        {{ form.phone }}
+        <div class="form-floating mb-3">
+            {{ form.phone }}
+            <label for="floatingInput">Phone</label>
+        </div>
         
-        <br><br>
-        
-        <b>{{ form.address.label }}:</b>
-        {{ form.address }}
-        
-        <br><br>
+        <div class="form-floating mb-3">
+            {{ form.address }}
+            <label for="floatingInput">Address</label>
+        </div>
 
         {% if form.password.errors %}
             {% for error in form.password.errors %}
@@ -58,22 +57,17 @@
             {% endfor %}
         {% endif %}
 
-        <b>{{ form.password.label }}:</b>
-        {{ form.password }}
+        <div class="form-floating mb-3">
+            {{ form.password }}
+            <label for="floatingInput">Password</label>
+        </div>
 
-        <div id="passwordHelpBlock" class="form-text">
-            Your password can't be too similar to your other personal information, must contain <br>
-            at least 8 characters, can't be a commonly used password and can't be entirely numeric.
+        <div class="form-floating mb-3">
+            {{ form.repeat_password }}
+            <label for="floatingInput">Repeat password</label>
         </div><br>
 
-        <b>{{ form.repeat_password.label }}:</b>
-        {{ form.repeat_password }}
-
-        <div id="passwordHelpBlock" class="form-text">
-            Enter the same password as before, for verification.
-        </div><br>
-
-        <input type="submit" value="Register">
+        <input type="submit" class="btn btn-light" style="background: rgba(211, 209, 209, 0.616);" value="Register">
     </form>
 </div>
 

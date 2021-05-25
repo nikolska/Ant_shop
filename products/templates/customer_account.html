@@ -5,6 +5,15 @@
 
 {% block content %}
 
+<div class="mt-3 mb-3">
+    {% if messages %}
+        {% for message in messages %}
+            <h3 style="color: rgb(48, 47, 47);">{{ message }}</h3>
+        {% endfor %}
+    {% endif %}
+</div>
+
+
 {% if request.user.is_authenticated %}
     <div class="mt-3 mb-3">
         <ul class="list-group list-group-flush">

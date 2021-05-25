@@ -1,12 +1,15 @@
+from django.contrib.auth import login as auth_login
 from django.contrib.auth.mixins import PermissionRequiredMixin
 from django.contrib.auth.models import Permission
-from django.contrib.auth.views import PasswordChangeView, PasswordResetView
-from django.core.mail import send_mail
+from django.contrib.auth.views import LoginView, PasswordChangeView
+from django.contrib.messages.views import SuccessMessageMixin
+from django.core.mail import mail_admins, send_mail
 from django.http import HttpResponseRedirect
+from django.shortcuts import render
 from django.urls import reverse_lazy
 from django.views.generic import DetailView, FormView, ListView, TemplateView, UpdateView
 
-from .forms import CustomerCreateForm, CustomerUpdateForm
+from .forms import ContactForm, CustomerCreateForm, CustomerUpdateForm, LoginForm
 from .models import Cart, Category, Customer, Product, Subcategory
 from ant_shop.settings import EMAIL_HOST_USER
 
@@ -33,6 +36,27 @@ class ProductListView(ListView):
         subcategory = Subcategory.objects.get(slug=kwargs['subcategory'])
         self.queryset = self.model.objects.filter(category=subcategory)
         return super().dispatch(request, *args, **kwargs)
+
+
+class ContactView(FormView):
+    form_class = ContactForm
+    template_name = 'contact_page.html'
+
+    def form_valid(self, form):
+        if self.request.user.id is not None:
+            sender = self.request.user.full_name
+            sender_email = self.request.user.email
+        else:
+            sender = form.cleaned_data['sender']
+            sender_email = form.cleaned_data['sender_email']
+        
+        message = form.cleaned_data['message_text']
+
+        subject = f'Message from {sender}, {sender_email}'
+        
+        mail_admins(subject, message, fail_silently=False)
+
+        return render(self.request, 'contact_message.html')
 
 
 class CustomerAccountView(TemplateView):
@@ -88,31 +112,14 @@ class CustomerCreateView(FormView):
         return HttpResponseRedirect(self.get_success_url())
 
 
-class CustomerDataUpdateView(PermissionRequiredMixin, UpdateView):
+class CustomerDataUpdateView(PermissionRequiredMixin, SuccessMessageMixin, UpdateView):
     model = Customer
     form_class = CustomerUpdateForm
-    template_name = 'customer_data_update.html'
-    success_url = reverse_lazy('customer_account')
     permission_required = 'products.change_customer'
-
-
-# class CustomerPasswordResetView(PermissionRequiredMixin, PasswordResetView):
-#     email_template_name = 'registration/password_reset_email.html'
-#     # form_class = PasswordResetForm
-#     from_email = EMAIL_HOST_USER
-#     subject_template_name = 'registration/password_reset_subject.txt'
-#     success_url = reverse_lazy('password_reset_done')
-#     template_name = 'registration/password_reset_form.html'
-#     # title = 'Password reset'
-
-#     # template_name = 'customer_change_password.html'
-#     # success_url = reverse_lazy('customer_account')
-#     # permission_required = 'products.change_customer'
-
-#     # def form_valid(self, form):
-#     #     form.save()
-#     #     return super().form_valid(form)
-
+    template_name = 'customer_data_update.html'
+    success_message = 'Your personal data has been successfully changed!'
+    success_url = reverse_lazy('customer_account')
+    
 
 class CustomerPasswordUpdateView(PermissionRequiredMixin, PasswordChangeView):
     template_name = 'customer_change_password.html'
@@ -122,4 +129,9 @@ class CustomerPasswordUpdateView(PermissionRequiredMixin, PasswordChangeView):
     def form_valid(self, form):
         form.save()
         return super().form_valid(form)
+
+
+# class LoginView(LoginView):
+#     form_class = LoginForm
+#     template_name = 'login.html'
 

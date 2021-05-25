@@ -1,0 +1,23 @@
+{% extends 'base.html' %}
+
+{% block title %}Home page{% endblock %}
+
+
+{% block content %}
+
+<div class="contact-form mt-4 mb-3" align="center">
+    <form action="" method="POST">
+        {% csrf_token %}
+
+        {{ form.sender }}
+        <br>
+        {{ form.sender_email }}
+        <br>
+        {{ form.message_text }}
+
+        <br><input type="submit" class="btn btn-light" style="background: rgba(211, 209, 209, 0.616);" value="Send message">
+    </form>
+</div>
+
+
+{% endblock %}

@@ -8,41 +8,51 @@
 <div class="mt-5 mb-4" align="center">
     <form method="POST">
         {% csrf_token %}
+        
+        <div class="form-floating mb-3">
+            {{ form.first_name }}
+            <label for="floatingInput">First name</label>
+        </div>
 
-        <b>{{ form.first_name.label }}</b>:
-        {{ form.first_name }}
+        <div class="form-floating mb-3">
+            {{ form.last_name }}
+            <label for="floatingInput">Last name</label>
+        </div>
 
-        <br><br>
-        <b>{{ form.last_name.label }}</b>:
-        {{ form.last_name }}
 
-        <br><br>
         {% if form.username.errors %}
             {% for error in form.username.errors %}
-                <p>{{ error }}</p>
+                <p style="color: red;">{{ error }}</p>
             {% endfor %}
         {% endif %}
-        <b>{{ form.username.label }}</b>:
-        {{ form.username }}
-        <div id="passwordHelpBlock" class="form-text">
-            150 characters or fewer. Letters, digits and @/./+/-/_ only.
-        </div><br>
+
+        <div class="form-floating mb-3">
+            {{ form.username }}
+            <label for="floatingInput">Username</label>
+        </div>
 
         {% if form.email.errors %}
             {% for error in form.email.errors %}
-                <p>{{ error }}</p>
+                <p style="color: red;">{{ error }}</p>
             {% endfor %}
         {% endif %}
-        <b>{{ form.email.label }}</b>:
-        {{ form.email }}
 
-        <br><br><b>{{ form.phone.label }}</b>:
-        {{ form.phone }}
+        <div class="form-floating mb-3">
+            {{ form.email }}
+            <label for="floatingInput">Email</label>
+        </div>
 
-        <br><br><b>{{ form.address.label }}</b>:
-        {{ form.address }}
+        <div class="form-floating mb-3">
+            {{ form.phone }}
+            <label for="floatingInput">Phone</label>
+        </div>
+        
+        <div class="form-floating mb-3">
+            {{ form.address }}
+            <label for="floatingInput">Address</label>
+        </div>
 
-        <br><br><br><input type="submit" value="Change">
+        <br><br><input type="submit" class="btn btn-light" style="background: rgba(211, 209, 209, 0.616);" value="Change">
     </form>
 </div>
 
