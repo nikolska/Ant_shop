@@ -1,7 +1,7 @@
 from django.contrib.auth.models import Permission
 from django.http import HttpResponseRedirect
 from django.urls import reverse, reverse_lazy
-from django.views.generic import CreateView, DetailView, ListView, TemplateView
+from django.views.generic import DetailView, FormView, ListView, TemplateView
 
 from .forms import CustomerCreateForm
 from .models import Cart, Category, Customer, Product, Subcategory
@@ -36,7 +36,7 @@ class CustomerAccountView(TemplateView):
     template_name = 'customer_account.html'
 
 
-class CustomerCreateView(CreateView):
+class CustomerCreateView(FormView):
     model = Customer
     form_class = CustomerCreateForm
     template_name = 'customer_create.html'
@@ -67,4 +67,3 @@ class CustomerCreateView(CreateView):
         customer.save()
 
         return HttpResponseRedirect(self.get_success_url())
-
