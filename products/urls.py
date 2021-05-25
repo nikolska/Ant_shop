@@ -1,15 +1,43 @@
-from django.contrib.auth.views import LoginView, LogoutView
+from django.contrib.auth.views import (
+    LoginView, LogoutView, PasswordResetCompleteView, 
+    PasswordResetConfirmView, PasswordResetDoneView, PasswordResetView
+)
 from django.urls import path, re_path
 
-from .views import CustomerAccountView, CustomerCreateView, HomePageView, ProductDetailView, ProductListView
+from .views import (
+    CustomerAccountView, CustomerCreateView, CustomerDataUpdateView, 
+    CustomerPasswordUpdateView, HomePageView, ProductDetailView, ProductListView
+)
 
 
 urlpatterns = [
     path('', HomePageView.as_view(), name='home_page'),
-    path('account/', CustomerAccountView.as_view(), name='user_account'),
+    path('account/', CustomerAccountView.as_view(), name='customer_account'),
     path('account/login/', LoginView.as_view(template_name='login.html'), name='login'),
     path('account/logout/', LogoutView.as_view(), name='logout'),
     path('account/registration/', CustomerCreateView.as_view(), name='registration'),
+    re_path(
+        r'^account/reset-password/$', 
+        PasswordResetView.as_view(), 
+        name='password_reset'
+    ),
+    re_path(r'^account/reset-password/done/$', PasswordResetDoneView.as_view(), name='password_reset_done'),
+    re_path(
+        r'^account/reset/(?P<uidb64>[0-9A-Za-z_\-]+)/(?P<token>[0-9A-Za-z]{1,13}-[0-9A-Za-z]{1,20})/$',
+        PasswordResetConfirmView.as_view(), 
+        name='password_reset_confirm'
+    ),
+    re_path(r'^account/reset/done/$', PasswordResetCompleteView.as_view(), name='password_reset_complete'),
+    re_path(
+        r'^account/update-password/(?P<pk>\d+)/$', 
+        CustomerPasswordUpdateView.as_view(), 
+        name='update_customer_password'
+    ),
+    re_path(
+        r'^account/update-personal-data/(?P<pk>\d+)/$', 
+        CustomerDataUpdateView.as_view(), 
+        name='update_customer_data'
+    ),
     re_path(
         r'^products/(?P<category>\w+-?\w+-?\w+-?\w+)/(?P<subcategory>\w+-?\w+-?\w+-?\w+)/(?P<slug>\w+-?\w+-?\w-?\w+-?\w+-?\w+)/$', 
         ProductDetailView.as_view(), 

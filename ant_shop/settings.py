@@ -28,6 +28,7 @@ DEBUG = True
 
 ALLOWED_HOSTS = []
 
+ADMINS = [('Anastzaja Szyjko', 'nikolska.work@gmail.com')]
 
 # Application definition
 
@@ -108,6 +109,15 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
+# Email send
+
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_HOST_USER = 'nikolska.work@gmail.com'
+EMAIL_HOST_PASSWORD = 'Dontrepeatyourself48'
+EMAIL_PORT = 587
+EMAIL_USE_TLS = True
+EMAIL_USE_SSL = False
 
 # Internationalization
 # https://docs.djangoproject.com/en/2.2/topics/i18n/
