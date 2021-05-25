@@ -40,7 +40,7 @@ class CustomerCreateView(CreateView):
     model = Customer
     form_class = CustomerCreateForm
     template_name = 'customer_create.html'
-    # success_url = reverse_lazy('login')
+    success_url = reverse_lazy('login')
 
     def form_valid(self, form):
         first_name = form.cleaned_data['first_name']
@@ -66,5 +66,5 @@ class CustomerCreateView(CreateView):
         customer.user_permissions.add(permission)
         customer.save()
 
-        return HttpResponseRedirect('/account/login/')
+        return HttpResponseRedirect(self.get_success_url())
 

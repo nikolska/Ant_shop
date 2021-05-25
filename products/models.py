@@ -93,7 +93,7 @@ class Product(models.Model):
 
 
 class Cart(models.Model):
-    owner = models.ForeignKey(Customer, on_delete=models.RESTRICT, null=True)
+    owner = models.ForeignKey(Customer, on_delete=models.PROTECT, null=True)
     products = models.ManyToManyField(Product, blank=True)
     total_products = models.PositiveIntegerField(default=0)
     final_price = models.DecimalField(default=0, max_digits=9, decimal_places=2)
