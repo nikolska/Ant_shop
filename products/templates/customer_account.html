@@ -6,19 +6,23 @@
 {% block content %}
 
 {% if request.user.is_authenticated %}
-    <h3>Hello, {{ user.username }}</h3><br>
-    <ul class="list-group list-group-flush">
-        <li class="list-group-item"><a class='link-dark' href="">Update personal data</a></li>
-        <li class="list-group-item"><a class='link-dark' href="">Change password</a></li>
-        <li class="list-group-item"><a class='link-dark' href="">Reset password</a></li>
-        <li class="list-group-item"><a class='link-dark' href="{% url 'logout' %}">Logout</a></li>
-    </ul>
+    <div class="mt-3 mb-3">
+        <h3>Hello, {{ user.username }}</h3><br>
+        <ul class="list-group list-group-flush">
+            <li class="list-group-item"><a class='link-dark' href="">Update personal data</a></li>
+            <li class="list-group-item"><a class='link-dark' href="">Change password</a></li>
+            <li class="list-group-item"><a class='link-dark' href="">Reset password</a></li>
+            <li class="list-group-item"><a class='link-dark' href="{% url 'logout' %}">Logout</a></li>
+        </ul>
+    </div>
 {% else %}
-    <h3>Welcome to our Ant Shop! Please, Login or Register</h3><br>
-    <ul class="list-group list-group-flush">
-        <li class="list-group-item"><a class='link-dark' href="{% url 'login' %}">Login</a></li>
-        <li class="list-group-item"><a class='link-dark' href="{% url 'registration' %}">Registration</a></li>
-    </ul>
+    <div class="mt-3 mb-3">
+        <h3>Welcome to our Ant Shop! Please, Login or Register</h3><br>
+        <ul class="list-group list-group-flush">
+            <li class="list-group-item"><a class='link-dark' href="{% url 'login' %}">Login</a></li>
+            <li class="list-group-item"><a class='link-dark' href="{% url 'registration' %}">Registration</a></li>
+        </ul>
+    </div>
 {% endif %}
 
 {% endblock %}
