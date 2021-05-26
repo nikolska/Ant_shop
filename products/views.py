@@ -7,15 +7,44 @@ from django.core.mail import mail_admins, send_mail
 from django.http import HttpResponseRedirect
 from django.shortcuts import render
 from django.urls import reverse_lazy
-from django.views.generic import DetailView, FormView, ListView, TemplateView, UpdateView
+from django.views.generic import DetailView, FormView, ListView, TemplateView, UpdateView, View
 
-from .forms import ContactForm, CustomerCreateForm, CustomerUpdateForm, LoginForm
-from .models import Cart, Category, Customer, Product, Subcategory
+from .forms import ContactForm, CustomerCreateForm, CustomerUpdateForm
+from .models import Cart, Customer, Product, Subcategory
 from ant_shop.settings import EMAIL_HOST_USER
 
 
+def get_customer_cart(request):
+    if request.user.is_anonymous:
+        cart = Cart.objects.filter(for_anonymous_user=True).first()
+        if not cart:
+            cart = Cart.objects.create(for_anonymous_user=True)
+    else:
+        customer = Customer.objects.get(username=request.user.username)
+        cart = Cart.objects.filter(owner=customer, in_order=False).first()
+    return cart
+
+
+class AddToCartView(View):
+    def get(self, request, *args, **kwargs):
+        cart = get_customer_cart(request)
+        product_slug = kwargs.get('slug')
+        product = Product.objects.get(slug=product_slug)
+        cart.products.add(product)
+        cart.total_products += 1
+        cart.final_price += product.price
+        cart.save()
+        return HttpResponseRedirect('/cart/')
+
+
+class CartView(View):
+    def get(self, request, *args, **kwargs):
+        cart = get_customer_cart(request)
+        ctx = {'cart': cart}
+        return render(request, 'cart_view.html', ctx)
+
+
 class HomePageView(TemplateView):
-    paginate_by = 3
     template_name = 'home_page.html'
 
 
@@ -94,6 +123,8 @@ class CustomerCreateView(FormView):
         customer.user_permissions.add(permission)
         customer.save()
 
+        Cart.objects.create(owner = customer)
+
         subject = 'Welcome to AntShop'
         message = f'''
             {customer.full_name}, welcome to AntShop! 
@@ -129,9 +160,4 @@ class CustomerPasswordUpdateView(PermissionRequiredMixin, PasswordChangeView):
     def form_valid(self, form):
         form.save()
         return super().form_valid(form)
-
-
-# class LoginView(LoginView):
-#     form_class = LoginForm
-#     template_name = 'login.html'
 

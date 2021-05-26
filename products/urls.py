@@ -5,8 +5,9 @@ from django.contrib.auth.views import (
 from django.urls import path, re_path
 
 from .views import (
-    ContactView, CustomerAccountView, CustomerCreateView, CustomerDataUpdateView, 
-    CustomerPasswordUpdateView, HomePageView, ProductDetailView, ProductListView
+    AddToCartView, CartView, ContactView, CustomerAccountView, 
+    CustomerCreateView, CustomerDataUpdateView, CustomerPasswordUpdateView, 
+    HomePageView, ProductDetailView, ProductListView
 )
 
 
@@ -26,14 +27,16 @@ urlpatterns = [
     re_path(r'^account/reset/done/$', PasswordResetCompleteView.as_view(), name='password_reset_complete'),
     re_path(r'^account/update-password/(?P<pk>\d+)/$', CustomerPasswordUpdateView.as_view(), name='update_customer_password'),
     re_path(r'^account/update-personal-data/(?P<pk>\d+)/$', CustomerDataUpdateView.as_view(), name='update_customer_data'),
+    re_path(r'^add-to-cart/(?P<slug>[-\w]+)/$', AddToCartView.as_view(), name='add_to_cart'),
+    re_path(r'^cart/$', CartView.as_view(), name='cart_view'),
     path('contact-us/', ContactView.as_view(), name='contact'),
     re_path(
-        r'^products/(?P<category>\w+-?\w+-?\w+-?\w+)/(?P<subcategory>\w+-?\w+-?\w+-?\w+)/(?P<slug>\w+-?\w+-?\w-?\w+-?\w+-?\w+)/$', 
+        r'^products/(?P<category>[-\w]+)/(?P<subcategory>[-\w]+)/(?P<slug>[-\w]+)/$', 
         ProductDetailView.as_view(), 
         name='product_detail'
     ), 
     re_path(
-        r'^products/(?P<category>\w+-?\w+-?\w+-?\w+)/(?P<subcategory>\w+-?\w+-?\w+-?\w+)/$', 
+        r'^products/(?P<category>[-\w]+)/(?P<subcategory>[-\w]+)/$', 
         ProductListView.as_view(), 
         name='product_list'
     ),

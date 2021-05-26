@@ -19,32 +19,40 @@
         <img src="{{ product.image.url }}" class="img-fluid" style="width: 600px;" alt="product-image">
     </div>
     <div class="col-md-6">
-        <h3>{{ product.title }}</h3><br>
-        <p><b>Price:</b> {{ product.price }}$</p>
-        <p><b>Code:</b> {{ product.code }}</p>
-        <p><b>Rating:</b> {{ product.rating }}</p>
-        <p><b>Availability:</b> 
-            {% if product.availability %}
-                &#128505;
-            {% else %}
-                &#9746;
-            {% endif %}
-        </p>
+        <table class="table">
+            <thead>
+              <tr>
+                <th scope="col"><h3>{{ product.title }}</h3></th>
+                <th scope="col"></th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><b>Price:</b></td>
+                <td>{{ product.price }}$</td>
+              </tr>
+              <tr>
+                <td><b>Code:</b></td>
+                <td>{{ product.code }}</td>
+              </tr>
+              <tr>
+                <td><b>Rating:</b></td>
+                <td>{{ product.rating }}</td>
+              </tr>
+            </tbody>
+        </table>
     </div>
     <div class="mt-2 md-4">
         <p class="mt-2 mb-2" align="justify"><b>Description:</b> {{ product.description|linebreaks }}</p>
         {% if product.availability %}
-            <a class="nav justify-content-end mt-2 mb-2" 
-                href="">
-                <button class="btn btn-danger">Add to cart</button>
-            </a>
+          <a class="nav justify-content-end mt-2 mb-3" href="{% url 'add_to_cart' product.slug %}">
+            <button class="btn btn-danger">Add to cart</button>
+          </a>
         {% else %}
-            <a class="nav justify-content-end mt-2 mb-2" href="">
-                <button class="btn btn-danger">Inform me about product availability</button>
-            </a>
+          <a class="nav justify-content-end mt-2 mb-3" href="">
+            <button class="btn btn-danger">Inform me about product availability</button>
+          </a>
         {% endif %}
-        
-
     </div>
 </div>
 

@@ -60,11 +60,11 @@ class CustomerUpdateForm(forms.ModelForm):
         }
         
 
-class LoginForm(forms.ModelForm):
-    class Meta:
-        model = Customer
-        fields = ['username', 'password']
-        widgets = {
-            'username': forms.TextInput({'class': 'form-control'}),
-            'password': forms.PasswordInput({'class': 'form-control'})
-        }
+# class LoginForm(forms.ModelForm):
+#     class Meta:
+#         model = Customer
+#         fields = ['username', 'password']
+#         widgets = {
+#             'username': forms.TextInput({'class': 'form-control'}),
+#             'password': forms.PasswordInput({'class': 'form-control'})
+#         }
