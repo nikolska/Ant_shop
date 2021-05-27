@@ -5,9 +5,9 @@ from django.contrib.auth.views import (
 from django.urls import path, re_path
 
 from .views import (
-    AddToCartView, CartView, ContactView, CustomerAccountView, 
+    AddToCartView, CartView, ChangeProductQuantityView, ContactView, CustomerAccountView, 
     CustomerCreateView, CustomerDataUpdateView, CustomerPasswordUpdateView, 
-    HomePageView, ProductDetailView, ProductListView
+    DeleteFromCartView, HomePageView, ProductDetailView, ProductListView
 )
 
 
@@ -29,7 +29,9 @@ urlpatterns = [
     re_path(r'^account/update-personal-data/(?P<pk>\d+)/$', CustomerDataUpdateView.as_view(), name='update_customer_data'),
     re_path(r'^add-to-cart/(?P<slug>[-\w]+)/$', AddToCartView.as_view(), name='add_to_cart'),
     re_path(r'^cart/$', CartView.as_view(), name='cart_view'),
+    re_path(r'^change-cart-products-quantity/(?P<slug>[-\w]+)/$', ChangeProductQuantityView.as_view(), name='change_product_quantity'),
     path('contact-us/', ContactView.as_view(), name='contact'),
+    re_path(r'^remove-from-cart/(?P<slug>[-\w]+)/$', DeleteFromCartView.as_view(), name='delete_from_cart'),
     re_path(
         r'^products/(?P<category>[-\w]+)/(?P<subcategory>[-\w]+)/(?P<slug>[-\w]+)/$', 
         ProductDetailView.as_view(), 

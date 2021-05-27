@@ -1,3 +1,4 @@
+from decimal import Decimal
 from PIL import Image
 
 from django.contrib.auth.models import AbstractUser
@@ -92,9 +93,24 @@ class Product(models.Model):
         return get_product_url(self, 'product_detail')
 
 
+class CartProduct(models.Model):
+    product = models.ForeignKey(Product, on_delete=models.CASCADE)
+    customer = models.ForeignKey(Customer, on_delete=models.CASCADE)
+    cart = models.ForeignKey('Cart', on_delete=models.CASCADE, related_name='related_products')
+    qty = models.PositiveIntegerField(default=1)
+    final_price = models.DecimalField(max_digits=9, decimal_places=2)
+
+    def __str__(self):
+        return f'{self.product.title} for {self.customer.full_name} cart'
+
+    def save(self, *args, **kwargs):
+        self.final_price = self.qty * self.product.price
+        super().save(*args, **kwargs)
+
+
 class Cart(models.Model):
     owner = models.ForeignKey(Customer, on_delete=models.PROTECT, null=True)
-    products = models.ManyToManyField(Product, blank=True)
+    products = models.ManyToManyField(CartProduct, blank=True, related_name='related_cart')
     total_products = models.PositiveIntegerField(default=0)
     final_price = models.DecimalField(default=0, max_digits=9, decimal_places=2)
     in_order = models.BooleanField(default=False)

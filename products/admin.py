@@ -4,7 +4,7 @@ from django.contrib import admin
 from django.forms import ModelForm, ValidationError
 from django.utils.safestring import mark_safe
 
-from .models import Cart, Category, Customer, Product, Subcategory
+from .models import Cart, CartProduct, Category, Customer, Product, Subcategory
 
 
 class ProductCategoryFilter(admin.SimpleListFilter):
@@ -74,6 +74,7 @@ class ProductAdmin(admin.ModelAdmin):
 
 
 admin.site.register(Cart)
+admin.site.register(CartProduct)
 admin.site.register(Category)
 admin.site.register(Customer)
 admin.site.register(Product, ProductAdmin)

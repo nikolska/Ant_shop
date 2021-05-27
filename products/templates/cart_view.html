@@ -8,10 +8,22 @@
 
 {% if not cart.products.count %}
     <h3 class="text-center mt-5 mb-5">Your cart is empty</h3> 
+{% else %}
+    <h3 class="mt-3" align="center">Your cart</h3>
+{% endif %}
+
+{% if messages %}
+    {% for message in messages %}
+      <div class="alert alert-success alert-dismissible fade show" role="alert">
+        <strong>{{ message }}</strong>
+        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+    {% endfor %}
 {% endif %}
 
 {% if cart.products.count > 0 %} 
-    <h3 class="mt-3" align="center">Your cart</h3>
     <table class="table table-hover mt-4 mb-4">
         <thead align="center">
             <tr>
@@ -20,24 +32,36 @@
                 <th scope="col">Price</th>
                 <th scope="col">Quantity</th>
                 <th scope="col">Total price</th>
+                <th scope="col">Remove from cart</th>
             </tr>
         </thead>
         <tbody>
-        {% for product in cart.products.all %}
+        {% for item in cart.products.all %}
             <tr id="product">
-                <td>{{ product.title }}</td>
+                <td>{{ item.product.title }}</td>
                 <td class="w-25">
-                    <img src="{{ product.image.url }}" class="img-fluid" alt="product image">
+                    <img src="{{ item.product.image.url }}" class="img-fluid" alt="product image">
                 </td>
-                <td align='center' id="product_price">{{ product.price }}</td>
-                <td align='center'><input class="form-control col-md-5" id="product_quantity" type="number" min_value=1 value="1"></td>
-                <td align='center' id="product_final_price">{{ product.price }}</td>
+                <td align='center'>{{ item.product.price }}$</td>
+                <td align='center'>
+                    <form action="{% url 'change_product_quantity' item.product.slug %}" method="POST">
+                        {% csrf_token %}
+                        <div style="display: flex; justify-content: center;">
+                            <input class="form-control col-md-5" name="product_quantity" type="number" min=1 value="{{ item.qty }}">
+                            <input type="submit" class="btn btn-light btn-sm" value=">">
+                        </div>
+                    </form>
+                </td>
+                <td align='center'>{{ item.final_price }}$</td>
+                <td align='center'><a href="{% url 'delete_from_cart' item.product.slug %}">
+                    <button class="btn btn-danger">REMOVE</button>
+                </a></td>
             </tr>
         {% endfor %}
             <tr>
-                <td colspan="3"><h5><b>Final price</b></h5></td>
-                <td align='center'><h5 id="cart_final_quantity"><b>{{ cart.total_products }}</b></h5></td>
-                <td align='center'><h5 id="cart_final_price"><b>{{ cart.final_price }}</b></h5></td>
+                <td colspan="4"><h5><b>Final price</b></h5></td>
+                <td align='center'><h5><b>{{ cart.total_products }}</b></h5></td>
+                <td align='center'><h5><b>{{ cart.final_price }}$</b></h5></td>
             </tr>
         </tbody>
     </table>

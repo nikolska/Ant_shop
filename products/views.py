@@ -1,16 +1,18 @@
+from django.contrib import messages
 from django.contrib.auth import login as auth_login
 from django.contrib.auth.mixins import PermissionRequiredMixin
 from django.contrib.auth.models import Permission
 from django.contrib.auth.views import LoginView, PasswordChangeView
 from django.contrib.messages.views import SuccessMessageMixin
 from django.core.mail import mail_admins, send_mail
+from django.db import models
 from django.http import HttpResponseRedirect
 from django.shortcuts import render
 from django.urls import reverse_lazy
 from django.views.generic import DetailView, FormView, ListView, TemplateView, UpdateView, View
 
 from .forms import ContactForm, CustomerCreateForm, CustomerUpdateForm
-from .models import Cart, Customer, Product, Subcategory
+from .models import Cart, CartProduct, Customer, Product, Subcategory
 from ant_shop.settings import EMAIL_HOST_USER
 
 
@@ -25,15 +27,63 @@ def get_customer_cart(request):
     return cart
 
 
+def recalc_cart(cart):
+    cart_data = cart.products.aggregate(models.Sum('final_price'), models.Count('id'))
+    if cart_data.get('final_price__sum'):
+        cart.final_price = cart_data['final_price__sum']
+    else:
+        cart.final_price = 0
+    cart.total_products = cart_data['id__count']
+    cart.save()
+
+
 class AddToCartView(View):
     def get(self, request, *args, **kwargs):
         cart = get_customer_cart(request)
-        product_slug = kwargs.get('slug')
-        product = Product.objects.get(slug=product_slug)
-        cart.products.add(product)
-        cart.total_products += 1
-        cart.final_price += product.price
-        cart.save()
+        product = Product.objects.get(slug=kwargs.get('slug'))
+        cart_product, created = CartProduct.objects.get_or_create(
+            product=product,
+            customer=request.user,
+            cart=cart,
+            final_price=product.price
+        )
+        if created:
+            cart.products.add(cart_product)
+        recalc_cart(cart)
+        messages.add_message(request, messages.INFO, f'{product.title} added to cart')
+        return HttpResponseRedirect('/cart/')
+
+
+class DeleteFromCartView(View):
+    def get(self, request, *args, **kwargs):
+        cart = get_customer_cart(request)
+        product = Product.objects.get(slug=kwargs.get('slug'))
+        cart_product = CartProduct.objects.get(
+            product=product,
+            customer=request.user,
+            cart=cart
+        )
+        cart.products.remove(cart_product)
+        cart_product.delete()
+        recalc_cart(cart)
+        messages.add_message(request, messages.INFO, f'{product.title} removed from cart')
+        return HttpResponseRedirect('/cart/')
+
+
+class ChangeProductQuantityView(View):
+    def post(self, request, *args, **kwargs):
+        cart = get_customer_cart(request)
+        product = Product.objects.get(slug=kwargs.get('slug'))
+        cart_product = CartProduct.objects.get(
+            product=product,
+            customer=request.user,
+            cart=cart
+        )
+        product_quantity = int(request.POST.get('product_quantity'))
+        cart_product.qty = product_quantity
+        cart_product.save()
+        recalc_cart(cart)
+        messages.add_message(request, messages.INFO, f'Quantity of {product.title} changed')
         return HttpResponseRedirect('/cart/')
 
 
