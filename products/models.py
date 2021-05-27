@@ -74,7 +74,7 @@ class Product(models.Model):
     code = models.CharField(max_length=255, unique=True)
     rating = models.FloatField(default=1.0, validators=[MinValueValidator(0.0), MaxValueValidator(10)])
     availability = models.BooleanField(default=False)
-    qty = models.PositiveIntegerField(default=0)
+    qty = models.PositiveIntegerField(default=0, null=True, blank=True)
     image = models.ImageField(upload_to='products/')
     creation_date = models.DateField(auto_now=True)
 
