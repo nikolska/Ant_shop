@@ -66,6 +66,7 @@ class Product(models.Model):
     code = models.CharField(max_length=255, unique=True)
     rating = models.FloatField(default=1.0, validators=[MinValueValidator(0.0), MaxValueValidator(10)])
     availability = models.BooleanField(default=False)
+    qty = models.PositiveIntegerField(default=0)
     image = models.ImageField(upload_to='products/')
     creation_date = models.DateField(auto_now=True)
 
@@ -88,6 +89,8 @@ class Product(models.Model):
     
     class Meta:
         ordering = ['title']
+    
+
     
     def get_absolute_url(self):
         return get_product_url(self, 'product_detail')
@@ -117,5 +120,4 @@ class Cart(models.Model):
     for_anonymous_user = models.BooleanField(default=False)
 
     def __str__(self):
-            return f'Cart of {self.owner}'
-
+        return f'Cart of {self.owner}'

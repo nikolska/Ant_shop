@@ -1,7 +1,7 @@
 {% extends 'base.html' %}
 {% load static %}
 
-{% block title %}Home page{% endblock %}
+{% block title %}Ant Shop{% endblock %}
 
 
 {% block content %}
@@ -35,13 +35,22 @@
                     <img class="card-img-top" src="{{ product.image.url }}" alt="product-{{ product.title }}-image"/>
                 </a>
                 <div class="card-body">
-                    <h4 class="card-title">
-                        <a href="{{ product.get_absolute_url }}">
+                    <h4 class="card-title text-center">
+                        <a style="color: black;" href="{{ product.get_absolute_url }}">
                             {{ product.title }}
                         </a>
                     </h4>
-                    <h5>${{ product.price }}</h5>
-                    <p class="card-text">{{ product.description|truncatechars:80 }}</p>
+                    <h5 style="color: red"><b>{{ product.price }}$</b></h5>
+                    <hr>
+                    <p><b>Code:</b> {{ product.code }}</p>
+                    {% if product.availability %}
+                        <p><b>Availability:</b> {{ product.qty }}</p>
+                        <a class="position-relative" href="{% url 'add_to_cart' product.slug %}">
+                            <button class="btn btn-outline-secondary">Add to cart</button>
+                        </a>
+                    {% else %}
+                        <p class="text-muted">The product is currently out of stock.</p>
+                    {% endif %}
                 </div>
                 <div class="card-footer"><small class="text-muted">{{ product.rating }} ★ ★ ★ ★ ☆</small></div>
             </div>

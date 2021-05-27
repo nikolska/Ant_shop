@@ -25,6 +25,12 @@ class ProductCategoryFilter(admin.SimpleListFilter):
 class ProductAdminForm(ModelForm):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
+        instance = kwargs.get('instance')
+        if instance and not instance.availability:
+            self.fields['qty'].widget.attrs.update({
+                'readonly': True, 'style': 'background: lightgray;'
+            })
+
         self.fields['slug'].help_text = mark_safe('''
             <span style="color: red">
                 The field can only contain letters, numbers, underscores or hyphens
@@ -40,6 +46,11 @@ class ProductAdminForm(ModelForm):
                 Choose from 0 to 10
             </span>
         ''')
+
+    def clean(self):
+        if not self.cleaned_data['availability']:
+            self.cleaned_data['qty'] = None
+        return self.cleaned_data
 
     def clean_image(self):
         image = self.cleaned_data['image']
@@ -57,8 +68,9 @@ class ProductAdminForm(ModelForm):
 
 
 class ProductAdmin(admin.ModelAdmin):
+    change_form_template = 'admin.html'
     form = ProductAdminForm
-    list_display = ('title', 'category', 'price', 'code', 'availability', 'get_small_image')
+    list_display = ('title', 'category', 'price', 'code', 'availability', 'qty', 'get_small_image')
     list_filter = ('availability', ProductCategoryFilter, 'category')
     search_fields = ('title',)
     readonly_fields = ('get_image',)
