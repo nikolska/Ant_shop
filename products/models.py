@@ -107,7 +107,7 @@ class Product(models.Model):
 
 class CartProduct(models.Model):
     product = models.ForeignKey(Product, on_delete=models.CASCADE)
-    customer = models.ForeignKey(Customer, on_delete=models.CASCADE)
+    customer = models.ForeignKey(Customer, on_delete=models.CASCADE, null=True)
     cart = models.ForeignKey('Cart', on_delete=models.CASCADE, related_name='related_products')
     qty = models.PositiveIntegerField(default=1)
     final_price = models.DecimalField(max_digits=9, decimal_places=2)

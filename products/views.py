@@ -43,7 +43,7 @@ class AddToCartView(View):
         product = Product.objects.get(slug=kwargs.get('slug'))
         cart_product, created = CartProduct.objects.get_or_create(
             product=product,
-            customer=request.user,
+            customer=cart.owner,
             cart=cart,
             final_price=product.price
         )
@@ -60,7 +60,7 @@ class DeleteFromCartView(View):
         product = Product.objects.get(slug=kwargs.get('slug'))
         cart_product = CartProduct.objects.get(
             product=product,
-            customer=request.user,
+            customer=cart.owner,
             cart=cart
         )
         cart.products.remove(cart_product)
@@ -76,7 +76,7 @@ class ChangeProductQuantityView(View):
         product = Product.objects.get(slug=kwargs.get('slug'))
         cart_product = CartProduct.objects.get(
             product=product,
-            customer=request.user,
+            customer=cart.owner,
             cart=cart
         )
         product_quantity = int(request.POST.get('product_quantity'))
