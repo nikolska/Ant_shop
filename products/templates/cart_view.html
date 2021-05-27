@@ -53,7 +53,7 @@
                     <form action="{% url 'change_product_quantity' item.product.slug %}" method="POST">
                         {% csrf_token %}
                         <div style="display: flex; justify-content: center;">
-                            <input class="form-control col-md-5" name="product_quantity" type="number" min=1 value="{{ item.qty }}">
+                            <input class="form-control col-md-7" name="product_quantity" type="number" min="1" max="{{ item.product.qty }}" value="{{ item.qty }}">
                             <input type="submit" class="btn btn-light btn-sm" value=">">
                         </div>
                     </form>

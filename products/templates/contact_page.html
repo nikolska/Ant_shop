@@ -1,21 +1,59 @@
 {% extends 'base.html' %}
+{% load static %}
 
 {% block title %}Home page{% endblock %}
 
 
 {% block content %}
 
-<div class="contact-form mt-4 mb-3" align="center">
+<img class="img-fluid mt-3 mb-4" src="{% static '/img/contact-us-1.jpg' %}" alt="contact-us-image"/>
+
+<div class="card-group mt-4">
+    <div class="col">
+        <div class="card border-dark mb-3" style="max-width: 18rem; border: none;">
+            <div style="display: flex; justify-content: center;">
+                <img class="img-fluid contact-image" src="{% static '/img/phone.png' %}" alt="phone-icon">
+            </div>
+            <div class="card-body text-dark">
+              <h5 class="card-title" align="center">{{ request.user.phone }}</h5>
+            </div>
+        </div>
+    </div>
+    <div class="col">
+        <div class="card border-dark mb-3" style="max-width: 18rem; border: none;">
+            <div style="display: flex; justify-content: center;">
+                <img class="img-fluid contact-image" src="{% static '/img/email.png' %}" alt="email-icon">
+            </div>
+            <div class="card-body text-dark">
+              <h5 class="card-title" align="center">{{ request.user.email }}</h5>
+            </div>
+        </div>
+    </div>
+    <div class="col">
+        <div class="card border-dark mb-3" style="max-width: 18rem; border: none;">
+            <div style="display: flex; justify-content: center;">
+                <img class="img-fluid contact-image" src="{% static '/img/address.png' %}" alt="address-icon">
+            </div>
+            <div class="card-body text-dark">
+              <h5 class="card-title" align="center">{{ request.user.address }}</h5>
+            </div>
+        </div>
+    </div>
+  </div>
+
+<img class="img-fluid mb-2" src="{% static '/img/contact-us-2.jpg' %}" alt="contact-us-image"/>
+
+<h3 class="container col-lg-7 mt-3">
+    Please feel free to email us, or just speak your mind below. 
+</h3>
+
+<div class="contact-form container col-lg-10 my-5" align="center">
     <form action="" method="POST">
         {% csrf_token %}
-
-        {{ form.sender }}
-        <br>
-        {{ form.sender_email }}
-        <br>
-        {{ form.message_text }}
-
-        <br><input type="submit" class="btn btn-light" style="background: rgba(211, 209, 209, 0.616);" value="Send message">
+        <div class="mb-2">{{ form.sender }}</div>
+        <div class="mb-2">{{ form.sender_email }}</div>
+        <div class="mb-2">{{ form.message_text }}</div>
+        <input type="submit" class="btn btn-light"  value="Send message">
     </form>
 </div>
 

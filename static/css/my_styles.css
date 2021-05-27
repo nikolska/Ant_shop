@@ -1,0 +1,10 @@
+.contact-form {
+    border-color: black;
+    border-top: none;
+    border-right: none;
+    border-left: none;
+}
+
+.contact-image {
+    width: 7rem;
+}

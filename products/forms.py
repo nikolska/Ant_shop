@@ -9,15 +9,15 @@ class ContactForm(forms.Form):
     sender = forms.CharField(
         label="Your Full Name", 
         max_length=255, 
-        widget=forms.TextInput({'class': 'form-control', 'placeholder': 'Your full name'})
+        widget=forms.TextInput({'class': 'form-control contact-form', 'placeholder': 'Your name'})
     )
     sender_email = forms.EmailField(
         label="Email Address", 
-        widget=forms.EmailInput({'class': 'form-control', 'placeholder': 'Your contact email'})
+        widget=forms.EmailInput({'class': 'form-control contact-form', 'placeholder': 'Email address'})
     )
     message_text = forms.CharField(
         label="Message Text", 
-        widget=forms.Textarea({'class': 'form-control', 'placeholder': 'Message text'})
+        widget=forms.Textarea({'class': 'form-control contact-form', 'placeholder': 'Message text', 'rows': 5})
     )
 
 
