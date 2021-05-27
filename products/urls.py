@@ -7,7 +7,7 @@ from django.urls import path, re_path
 from .views import (
     AddToCartView, CartView, ChangeProductQuantityView, ContactView, CustomerAccountView, 
     CustomerCreateView, CustomerDataUpdateView, CustomerPasswordUpdateView, 
-    DeleteFromCartView, HomePageView, ProductDetailView, ProductListView
+    DeleteFromCartView, HomePageView, InformCustomerView, ProductDetailView, ProductListView
 )
 
 
@@ -30,7 +30,8 @@ urlpatterns = [
     re_path(r'^add-to-cart/(?P<slug>[-\w]+)/$', AddToCartView.as_view(), name='add_to_cart'),
     re_path(r'^cart/$', CartView.as_view(), name='cart_view'),
     re_path(r'^change-cart-products-quantity/(?P<slug>[-\w]+)/$', ChangeProductQuantityView.as_view(), name='change_product_quantity'),
-    path('contact-us/', ContactView.as_view(), name='contact'),
+    re_path(r'^contact-us/$', ContactView.as_view(), name='contact'),
+    re_path(r'^inform-me/(?P<slug>[-\w]+)/$', InformCustomerView.as_view(), name='inform_customer'),
     re_path(r'^remove-from-cart/(?P<slug>[-\w]+)/$', DeleteFromCartView.as_view(), name='delete_from_cart'),
     re_path(
         r'^products/(?P<category>[-\w]+)/(?P<subcategory>[-\w]+)/(?P<slug>[-\w]+)/$', 

@@ -99,8 +99,6 @@ class Product(models.Model):
     class Meta:
         ordering = ['title']
     
-
-    
     def get_absolute_url(self):
         return get_product_url(self, 'product_detail')
 

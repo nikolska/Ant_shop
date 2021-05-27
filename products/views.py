@@ -11,7 +11,7 @@ from django.shortcuts import render
 from django.urls import reverse_lazy
 from django.views.generic import DetailView, FormView, ListView, TemplateView, UpdateView, View
 
-from .forms import ContactForm, CustomerCreateForm, CustomerUpdateForm
+from .forms import ContactForm, CustomerCreateForm, CustomerUpdateForm, InformForm
 from .models import Cart, CartProduct, Customer, Product, Subcategory
 from ant_shop.settings import EMAIL_HOST_USER
 
@@ -54,20 +54,11 @@ class AddToCartView(View):
         return HttpResponseRedirect('/cart/')
 
 
-class DeleteFromCartView(View):
+class CartView(View):
     def get(self, request, *args, **kwargs):
         cart = get_customer_cart(request)
-        product = Product.objects.get(slug=kwargs.get('slug'))
-        cart_product = CartProduct.objects.get(
-            product=product,
-            customer=cart.owner,
-            cart=cart
-        )
-        cart.products.remove(cart_product)
-        cart_product.delete()
-        recalc_cart(cart)
-        messages.add_message(request, messages.INFO, f'{product.title} removed from cart')
-        return HttpResponseRedirect('/cart/')
+        ctx = {'cart': cart}
+        return render(request, 'cart_view.html', ctx)
 
 
 class ChangeProductQuantityView(View):
@@ -87,15 +78,44 @@ class ChangeProductQuantityView(View):
         return HttpResponseRedirect('/cart/')
 
 
-class CartView(View):
+class DeleteFromCartView(View):
     def get(self, request, *args, **kwargs):
         cart = get_customer_cart(request)
-        ctx = {'cart': cart}
-        return render(request, 'cart_view.html', ctx)
+        product = Product.objects.get(slug=kwargs.get('slug'))
+        cart_product = CartProduct.objects.get(
+            product=product,
+            customer=cart.owner,
+            cart=cart
+        )
+        cart.products.remove(cart_product)
+        cart_product.delete()
+        recalc_cart(cart)
+        messages.add_message(request, messages.INFO, f'{product.title} removed from cart')
+        return HttpResponseRedirect('/cart/')
 
 
 class HomePageView(TemplateView):
     template_name = 'home_page.html'
+
+
+class InformCustomerView(FormView):
+    form_class = InformForm
+    template_name = 'inform_customer.html'
+    
+    def form_valid(self, form, *args, **kwargs):
+        
+        product = Product.objects.get(slug=self.kwargs['slug'])
+        email = form.cleaned_data['email']
+
+        subject = f"Message from AntShop customer to inform about {product} avalibility"
+        message = f'''
+            Hello, I'm your customer from AntShop WebSite. Please, inform me {email} about 
+            <a href="https://ant-shop.herokuapp.com/products/{product.get_absolute_url()}/">{product}</a> avalibility.
+        '''
+
+        mail_admins(subject, message, fail_silently=False)
+
+        return render(self.request, 'contact_message.html')
 
 
 class ProductDetailView(DetailView):

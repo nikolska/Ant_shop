@@ -50,7 +50,6 @@ class CustomerCreateForm(forms.ModelForm):
             self.add_error('phone', 'Start with + . Then digits only!')
 
 
-
 class CustomerUpdateForm(forms.ModelForm):
     class Meta:
         model = Customer
@@ -63,3 +62,10 @@ class CustomerUpdateForm(forms.ModelForm):
             'phone': forms.TextInput({'class': 'form-control'}),
             'address': forms.TextInput({'class': 'form-control'}),
         }
+
+
+class InformForm(forms.Form):
+    email = forms.EmailField(
+        label="Email Address", 
+        widget=forms.EmailInput({'class': 'form-control', 'placeholder': 'Email address'})
+    )

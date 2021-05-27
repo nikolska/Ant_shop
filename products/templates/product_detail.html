@@ -52,7 +52,7 @@
             <button class="btn btn-outline-danger">Add to cart</button>
           </a>
         {% else %}
-          <a class="nav justify-content-end mt-2" style="text-decoration: none;" href="">
+          <a class="nav justify-content-end mt-2" style="text-decoration: none;" href="{% url 'inform_customer' product.slug %}">
             <button class="btn btn-outline-danger">Inform me about product availability</button>
           </a>
         {% endif %}

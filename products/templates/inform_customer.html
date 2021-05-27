@@ -1,0 +1,24 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Inform me{% endblock %}
+
+
+{% block content %}
+
+<img class="img-fluid mt-3 mb-4" src="{% static '/img/inform-me.jpg' %}" alt="contact-us-image"/>
+
+<h4 class="container col-lg-12 mt-3 text-center">
+    Write your email address below so that we can inform you when the product is on sale.
+</h4>
+
+<div class="contact-form container col-lg-10 my-4" align="center">
+    <form action="" method="POST">
+        {% csrf_token %}
+        <div class="mb-2">{{ form.email }}</div>
+        <input type="submit" class="btn btn-light"  value="Inform me adout product avalibility">
+    </form>
+</div>
+
+
+{% endblock %}
