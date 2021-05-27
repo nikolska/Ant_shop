@@ -21,18 +21,18 @@
 
         {% if form.username.errors %}
             {% for error in form.username.errors %}
-                <p class="text-danger">{{ error }}</p>
+                <p class="text-danger">Username: {{ error }}</p>
             {% endfor %}
         {% endif %}
 
         <div class="form-floating mb-3">
             {{ form.username }}
-            <label for="floatingInput">Username</label>
+            <label for="floatingInput">Username (150 characters or fewer. Letters, digits and @/./+/-/_ only)</label>
         </div>
 
         {% if form.email.errors %}
             {% for error in form.email.errors %}
-                <p class="text-danger">{{ error }}</p>
+                <p class="text-danger">Email: {{ error }}</p>
             {% endfor %}
         {% endif %}
 
@@ -41,14 +41,20 @@
             <label for="floatingInput">Email</label>
         </div>
 
+        {% if form.phone.errors %}
+            {% for error in form.phone.errors %}
+                <p class="text-danger">Phone number: {{ error }}</p>
+            {% endfor %}
+        {% endif %}
+
         <div class="form-floating mb-3">
             {{ form.phone }}
-            <label for="floatingInput">Phone</label>
+            <label for="floatingInput">Phone (Start with + . Then digits only. For example: +123456789)</label>
         </div>
         
         <div class="form-floating mb-3">
             {{ form.address }}
-            <label for="floatingInput">Address</label>
+            <label for="floatingInput">Address (Street name and number, Apartment/Room, City/Town/Village, Postal code, Country)</label>
         </div>
 
         {% if form.password.errors %}

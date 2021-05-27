@@ -1,5 +1,5 @@
-from decimal import Decimal
 from PIL import Image
+import string
 
 from django.contrib.auth.models import AbstractUser
 from django.core.validators import MaxValueValidator, MinValueValidator
@@ -42,6 +42,10 @@ class Category(models.Model):
     class Meta:
         ordering = ['name']
         verbose_name_plural = 'Categories'
+    
+    def save(self, *args, **kwargs):
+        self.title = string.capwords(self.title)
+        super().save(*args, **kwargs)
 
 
 class Subcategory(models.Model):
@@ -55,6 +59,10 @@ class Subcategory(models.Model):
     class Meta:
         ordering = ['name']
         verbose_name_plural = 'Subcategories'
+    
+    def save(self, *args, **kwargs):
+        self.title = string.capwords(self.title)
+        super().save(*args, **kwargs)
 
 
 class Product(models.Model):
@@ -74,6 +82,7 @@ class Product(models.Model):
         return self.title
     
     def save(self, *args, **kwargs):
+        self.title = string.capwords(self.title)
         image = self.image
         img = Image.open(image)
         min_height, min_width = (400, 400)

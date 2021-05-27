@@ -1,3 +1,5 @@
+import re
+
 from django import forms
 
 from .models import Customer
@@ -43,7 +45,10 @@ class CustomerCreateForm(forms.ModelForm):
         if cleaned_data['password'] != cleaned_data['repeat_password']:
             self.add_error('password', 'Passwords do not match!')
         if Customer.objects.filter(username=cleaned_data['username']):
-            self.add_error('username', 'This username is already taken, try another one!')
+            self.add_error('username', 'This username is already taken, try another one.')
+        if not re.fullmatch(r'^\+\d+$', cleaned_data['phone']):
+            self.add_error('phone', 'Start with + . Then digits only!')
+
 
 
 class CustomerUpdateForm(forms.ModelForm):
@@ -58,13 +63,3 @@ class CustomerUpdateForm(forms.ModelForm):
             'phone': forms.TextInput({'class': 'form-control'}),
             'address': forms.TextInput({'class': 'form-control'}),
         }
-        
-
-# class LoginForm(forms.ModelForm):
-#     class Meta:
-#         model = Customer
-#         fields = ['username', 'password']
-#         widgets = {
-#             'username': forms.TextInput({'class': 'form-control'}),
-#             'password': forms.PasswordInput({'class': 'form-control'})
-#         }

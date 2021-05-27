@@ -38,9 +38,15 @@
         <tbody>
         {% for item in cart.products.all %}
             <tr id="product">
-                <td>{{ item.product.title }}</td>
+                <td>
+                    <a style="color: black; text-decoration: none;" href="{{ item.product.get_absolute_url }}">
+                        {{ item.product.title }}
+                    </a>
+                </td>
                 <td class="w-25">
-                    <img src="{{ item.product.image.url }}" class="img-fluid" alt="product image">
+                    <a href="{{ item.product.get_absolute_url }}">
+                        <img src="{{ item.product.image.url }}" class="img-fluid" alt="product image">
+                    </a>
                 </td>
                 <td align='center'>{{ item.product.price }}$</td>
                 <td align='center'>
@@ -54,7 +60,7 @@
                 </td>
                 <td align='center'>{{ item.final_price }}$</td>
                 <td align='center'><a href="{% url 'delete_from_cart' item.product.slug %}">
-                    <button class="btn btn-danger">REMOVE</button>
+                    <button class="btn btn-outline-danger">REMOVE</button>
                 </a></td>
             </tr>
         {% endfor %}

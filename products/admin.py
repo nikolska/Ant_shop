@@ -7,6 +7,26 @@ from django.utils.safestring import mark_safe
 from .models import Cart, CartProduct, Category, Customer, Product, Subcategory
 
 
+class CustomerAdminForm(ModelForm):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+
+        self.fields['phone'].help_text = mark_safe('''
+            <span style="color: grey">
+               Start from + . Then digits only
+            </span>
+        ''')
+        self.fields['address'].help_text = mark_safe('''
+            <span style="color: grey">
+                Street name and number, Apartment/Room, City/Town/Village, Postal code, Country
+            </span>
+        ''')
+
+
+class CustomerAdmin(admin.ModelAdmin):
+    form = CustomerAdminForm
+
+
 class ProductCategoryFilter(admin.SimpleListFilter):
     title = ' main category'
     parameter_name = 'category'
@@ -88,6 +108,6 @@ class ProductAdmin(admin.ModelAdmin):
 admin.site.register(Cart)
 admin.site.register(CartProduct)
 admin.site.register(Category)
-admin.site.register(Customer)
+admin.site.register(Customer, CustomerAdmin)
 admin.site.register(Product, ProductAdmin)
 admin.site.register(Subcategory)
