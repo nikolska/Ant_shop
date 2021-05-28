@@ -7,6 +7,33 @@ from django.utils.safestring import mark_safe
 from .models import Cart, CartProduct, Category, Customer, Order, Product, Subcategory
 
 
+class CartAdmin(admin.ModelAdmin):
+    list_display = ('owner', 'total_products', 'final_price', 'in_order', 'for_anonymous_user')
+    list_filter = ('owner', 'in_order', 'for_anonymous_user')
+    search_fields = ('owner',)
+
+
+class CartProductAdmin(admin.ModelAdmin):
+    list_display = ('product', 'customer', 'cart', 'qty', 'final_price', 'get_small_image')
+    list_filter = ('product', 'customer', 'cart')
+    search_fields = ('product',)
+    readonly_fields = ('get_image',)
+
+    def get_image(self, obj):
+        return mark_safe(f'<img src={obj.product.image.url} width="250" height="150">')
+    
+    def get_small_image(self, obj):
+        return mark_safe(f'<img src={obj.product.image.url} width="130" height="70">')
+    
+    get_image.short_description = 'Preview'
+    get_small_image.short_description = 'Image'
+
+
+class CategoryAdmin(admin.ModelAdmin):
+    list_display = ('name', 'slug')
+    search_fields = ('name',)
+
+
 class CustomerAdminForm(ModelForm):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -25,10 +52,19 @@ class CustomerAdminForm(ModelForm):
 
 class CustomerAdmin(admin.ModelAdmin):
     form = CustomerAdminForm
+    list_display = ('full_name', 'username', 'email', 'is_staff')
+    list_filter = ('is_active', 'is_staff')
+    search_fields = ('full_name', 'first_name', 'last_name', 'email', 'phone', 'address')
+
+
+class OrderAdmin(admin.ModelAdmin):
+    list_display = ('customer', 'cart', 'email', 'status', 'buying_type', 'created_at', 'order_date')
+    list_filter = ('status', 'buying_type', 'created_at', 'order_date')
+    search_fields = ('customer', 'first_name', 'last_name', 'email', 'phone', 'address')
 
 
 class ProductCategoryFilter(admin.SimpleListFilter):
-    title = ' main category'
+    title = 'main category'
     parameter_name = 'category'
 
     def lookups(self, request, model_admin):
@@ -105,10 +141,16 @@ class ProductAdmin(admin.ModelAdmin):
     get_small_image.short_description = 'Image'
 
 
-admin.site.register(Cart)
-admin.site.register(CartProduct)
-admin.site.register(Category)
+class SubcategoryAdmin(admin.ModelAdmin):
+    list_display = ('name', 'slug', 'category')
+    list_filter = ('category',)
+    search_fields = ('name',)
+
+
+admin.site.register(Cart, CartAdmin)
+admin.site.register(CartProduct, CartProductAdmin)
+admin.site.register(Category, CategoryAdmin)
 admin.site.register(Customer, CustomerAdmin)
-admin.site.register(Order)
+admin.site.register(Order, OrderAdmin)
 admin.site.register(Product, ProductAdmin)
-admin.site.register(Subcategory)
+admin.site.register(Subcategory, SubcategoryAdmin)

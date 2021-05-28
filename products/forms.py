@@ -1,4 +1,5 @@
 import re
+from datetime import datetime
 
 from django import forms
 
@@ -93,3 +94,5 @@ class OrderForm(forms.ModelForm):
         cleaned_data = super().clean()
         if not re.fullmatch(r'^\+\d+$', cleaned_data['phone']):
             self.add_error('phone', 'Start with + . Then digits only!')
+        if cleaned_data['order_date'] < datetime.today().date():
+            self.add_error('order_date', 'Please, check the correct date!')

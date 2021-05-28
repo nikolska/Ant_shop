@@ -6,9 +6,10 @@ from django.urls import path, re_path
 
 from .views import (
     AddToCartView, CartView, ChangeProductQuantityView, ContactView, 
-    CustomerAccountView, CustomerCreateView, CustomerDataUpdateView, 
-    CustomerPasswordUpdateView, DeleteFromCartView, HomePageView, 
-    InformCustomerView, MakeOrderView, OrderView, ProductDetailView, ProductListView
+    CustomerAccountView, CustomerCreateView, CustomerDataUpdateView,
+    CustomerOrdersListView,CustomerPasswordUpdateView, DeleteFromCartView, 
+    HomePageView, InformCustomerView, MakeOrderView, OrderView, 
+    ProductDetailView, ProductListView
 )
 
 
@@ -17,6 +18,7 @@ urlpatterns = [
     path('account/', CustomerAccountView.as_view(), name='customer_account'),
     path('account/login/', LoginView.as_view(template_name='login.html'), name='login'),
     path('account/logout/', LogoutView.as_view(), name='logout'),
+    path('account/orders/', CustomerOrdersListView.as_view(), name='orders'),
     path('account/registration/', CustomerCreateView.as_view(), name='registration'),
     re_path(r'^account/reset-password/$', PasswordResetView.as_view(), name='password_reset'),
     re_path(r'^account/reset-password/done/$', PasswordResetDoneView.as_view(), name='password_reset_done'),

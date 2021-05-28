@@ -27,7 +27,6 @@ class MaxResolutionErrorException(Exception):
 class Customer(AbstractUser):
     phone = models.CharField(max_length=20, null=True, blank=True)
     address = models.CharField(max_length=255, null=True, blank=True)
-    # orders = models.ManyToManyField('Order', related_name='related_order')
 
     @property
     def full_name(self):
@@ -113,7 +112,7 @@ class CartProduct(models.Model):
     final_price = models.DecimalField(max_digits=9, decimal_places=2)
 
     def __str__(self):
-        return f'{self.product.title} for {self.customer.full_name} cart'
+        return f'{self.product.title} for cart'
 
     def save(self, *args, **kwargs):
         self.final_price = self.qty * self.product.price
@@ -148,9 +147,11 @@ class Order(models.Model):
         (STATUS_COMPLETED, 'Order completed')
     )
 
+    DELIVERY_COST = 7
+
     BUYING_TYPE_CHOICES = (
         (BUYING_TYPE_SELF, 'Self-pickup'),
-        (BUYING_TYPE_DELIVERY, 'Delivery')
+        (BUYING_TYPE_DELIVERY, f'Delivery ({DELIVERY_COST}$)')
     )
 
     customer = models.ForeignKey(Customer, on_delete=models.PROTECT, related_name='related_orders', null=True, blank=True)

@@ -11,7 +11,7 @@ from django.urls import reverse_lazy
 from django.views.generic import DetailView, FormView, ListView, TemplateView, UpdateView, View
 
 from .forms import ContactForm, CustomerCreateForm, CustomerUpdateForm, InformForm, OrderForm
-from .models import Cart, CartProduct, Customer, Product, Subcategory
+from .models import Cart, CartProduct, Customer, Order, Product, Subcategory
 from ant_shop.settings import EMAIL_HOST_USER
 
 
@@ -139,8 +139,12 @@ class MakeOrderView(View):
 
             if not request.user.is_anonymous:
                 new_order.customer = customer
-            
+
             new_order.save()
+
+            order_final_price = cart.final_price
+            if new_order.buying_type == 'BUYING_TYPE_DELIVERY':
+                order_final_price += Order.DELIVERY_COST
 
             products = []
             for item in cart.products.all():
@@ -165,8 +169,8 @@ class MakeOrderView(View):
                 Phone: {new_order.phone}
                 Address: {new_order.address}
                 Order details:
-                Products ({cart.final_price}): {products}
-                Total price: {cart.final_price}
+                Products ({cart.total_products}): {products}
+                Total price: {order_final_price}
                 Buying type: {new_order.buying_type}
                 Order date: {new_order.order_date}
                 Comment: {new_order.comment}
@@ -178,8 +182,8 @@ class MakeOrderView(View):
             message_for_customer = f'''
                 {new_order.first_name} {new_order.last_name}, 
                 thank you for shopping in AntShop! 
-                You buy {cart.final_price} products: {products}
-                Total price: {cart.final_price}
+                You buy {cart.total_products} products: {products}
+                Total price: {order_final_price}
                 Order details:
                 First name: {new_order.first_name}
                 Last name: {new_order.last_name}
@@ -206,6 +210,10 @@ class MakeOrderView(View):
                 You can also see them in your personal account in the ORDERS section.
             ''')
             return HttpResponseRedirect('/')
+        messages.add_message(request, messages.ERROR, '''
+            Please, enter a valid data! Email must contains @ and server domain name.
+            Phone number must start with + and then only digits. Date should be no earlier than today.
+        ''')
         return HttpResponseRedirect('/order/')
 
 
@@ -317,6 +325,15 @@ class CustomerDataUpdateView(PermissionRequiredMixin, SuccessMessageMixin, Updat
     success_message = 'Your personal data has been successfully changed!'
     success_url = reverse_lazy('customer_account')
     
+
+class CustomerOrdersListView(ListView):
+    model = Order
+    template_name = 'customer_orders.html'
+
+    def dispatch(self, request, *args, **kwargs):
+        self.queryset = self.model.objects.filter(customer=request.user)
+        return super().dispatch(request, *args, **kwargs)
+
 
 class CustomerPasswordUpdateView(PermissionRequiredMixin, PasswordChangeView):
     template_name = 'customer_change_password.html'
