@@ -50,7 +50,9 @@
         <div class="container">
             <div class="row">
                 <div class="col-lg-3">
-                    <h1 class="my-4">Ant Shop</h1>
+                    <h1 class="my-4">
+                        <a href="{% url 'home_page' %}" style="color: rgb(36, 36, 36); text-decoration: none;">Ant Shop</a>
+                    </h1>
                     <div class="list-group mb-4">
                         {% for category in categories %}
                             <div class="btn-group dropright m-1">
@@ -80,7 +82,11 @@
         
         <!-- Footer-->
         <footer class="py-5 bg-dark">
-            <div class="container"><p class="m-0 text-center text-white">Copyright &copy; AnMa Production 2021</p></div>
+            <div class="container">
+                <p class="m-0 text-center text-white">Copyright &copy; 
+                    <a href="https://github.com/nikolska" style="color: white; text-decoration: none;">AnMa Production</a> 2021
+                </p>
+            </div>
         </footer>
 
         <!-- Bootstrap core JS-->

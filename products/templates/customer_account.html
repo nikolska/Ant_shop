@@ -1,4 +1,5 @@
 {% extends 'base.html' %}
+{% load static %}
 
 {% block title %}Your account{% endblock %}
 
@@ -15,24 +16,42 @@
 
 
 {% if request.user.is_authenticated %}
-    <div class="mt-3 mb-3">
+    <div class="my-3">
         <ul class="list-group list-group-flush">
             <li class="list-group-item">
+                <img class="img-fluid icon" src="{% static '/img/user-data.png' %}" alt="user-data-icon">
                 <a class='link-dark' href="{% url 'update_customer_data' user.pk %}">Update personal data</a>
             </li>
             <li class="list-group-item">
+                <img class="img-fluid icon" src="{% static '/img/password-change.png' %}" alt="change-password-icon">
                 <a class='link-dark' href="{% url 'update_customer_password' user.pk  %}">Change password</a>
             </li>
-            <li class="list-group-item"><a class='link-dark' href="{% url 'password_reset' %}">Reset password</a></li>
-            <li class="list-group-item"><a class='link-dark' href="{% url 'logout' %}">Logout</a></li>
+            <li class="list-group-item">
+                <img class="img-fluid icon" src="{% static '/img/password-reset.png' %}" alt="password-reset-icon">
+                <a class='link-dark' href="{% url 'password_reset' %}">Reset password</a>
+            </li>
+            <li class="list-group-item">
+                <img class="img-fluid icon" src="{% static '/img/orders.png' %}" alt="orders-icon">
+                <a class='link-dark' href="#">Your orders</a>
+            </li>
+            <li class="list-group-item">
+                <img class="img-fluid icon" src="{% static '/img/logout.png' %}" alt="logout-icon">
+                <a class='link-dark' href="{% url 'logout' %}">Logout</a>
+            </li>
         </ul>
     </div>
 {% else %}
     <div class="mt-3 mb-3">
         <h3>Welcome to our Ant Shop! Please, Sign In or Register</h3><br>
         <ul class="list-group list-group-flush">
-            <li class="list-group-item"><a class='link-dark' href="{% url 'login' %}">Sign in</a></li>
-            <li class="list-group-item"><a class='link-dark' href="{% url 'registration' %}">Registration</a></li>
+            <li class="list-group-item">
+                <img class="img-fluid icon" src="{% static '/img/login.png' %}" alt="login-icon">
+                <a class='link-dark' href="{% url 'login' %}">Sign in</a>
+            </li>
+            <li class="list-group-item">
+                <img class="img-fluid icon" src="{% static '/img/register.png' %}" alt="register-icon">
+                <a class='link-dark' href="{% url 'registration' %}">Registration</a>
+            </li>
         </ul>
     </div>
 {% endif %}
