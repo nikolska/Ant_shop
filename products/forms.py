@@ -2,7 +2,7 @@ import re
 
 from django import forms
 
-from .models import Customer
+from .models import Customer, Order
 
 
 class ContactForm(forms.Form):
@@ -69,3 +69,19 @@ class InformForm(forms.Form):
         label="Email Address", 
         widget=forms.EmailInput({'class': 'form-control', 'placeholder': 'Email address'})
     )
+
+
+class OrderForm(forms.ModelForm):
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields['order_date'].label = 'Date of receipt of the order'
+
+    order_date = forms.DateField(widget=forms.TextInput(attrs={'type': 'date'}))
+
+    class Meta:
+        model = Order
+        fields = (
+            'first_name', 'last_name', 'phone', 'address', 'buying_type', 'order_date', 'comment'
+        )
+

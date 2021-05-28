@@ -15,7 +15,7 @@
                 <img class="img-fluid contact-image" src="{% static '/img/phone.png' %}" alt="phone-icon">
             </div>
             <div class="card-body text-dark">
-              <h5 class="card-title" align="center">{{ request.user.phone }}</h5>
+              <h5 class="card-title" align="center">{{ admin.phone }}</h5>
             </div>
         </div>
     </div>
@@ -25,7 +25,7 @@
                 <img class="img-fluid contact-image" src="{% static '/img/email.png' %}" alt="email-icon">
             </div>
             <div class="card-body text-dark">
-              <h5 class="card-title" align="center">{{ request.user.email }}</h5>
+              <h5 class="card-title" align="center">{{ admin.email }}</h5>
             </div>
         </div>
     </div>
@@ -35,7 +35,7 @@
                 <img class="img-fluid contact-image" src="{% static '/img/address.png' %}" alt="address-icon">
             </div>
             <div class="card-body text-dark">
-              <h5 class="card-title" align="center">{{ request.user.address }}</h5>
+              <h5 class="card-title" align="center">{{ admin.address }}</h5>
             </div>
         </div>
     </div>

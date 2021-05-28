@@ -1,8 +1,7 @@
 from django.contrib import messages
-from django.contrib.auth import login as auth_login
 from django.contrib.auth.mixins import PermissionRequiredMixin
 from django.contrib.auth.models import Permission
-from django.contrib.auth.views import LoginView, PasswordChangeView
+from django.contrib.auth.views import PasswordChangeView
 from django.contrib.messages.views import SuccessMessageMixin
 from django.core.mail import mail_admins, send_mail
 from django.db import models
@@ -11,7 +10,7 @@ from django.shortcuts import render
 from django.urls import reverse_lazy
 from django.views.generic import DetailView, FormView, ListView, TemplateView, UpdateView, View
 
-from .forms import ContactForm, CustomerCreateForm, CustomerUpdateForm, InformForm
+from .forms import ContactForm, CustomerCreateForm, CustomerUpdateForm, InformForm, OrderForm
 from .models import Cart, CartProduct, Customer, Product, Subcategory
 from ant_shop.settings import EMAIL_HOST_USER
 
@@ -116,6 +115,11 @@ class InformCustomerView(FormView):
         mail_admins(subject, message, fail_silently=False)
 
         return render(self.request, 'contact_message.html')
+
+
+class OrderView(FormView):
+    form_class = OrderForm
+    template_name = 'order_form.html'
 
 
 class ProductDetailView(DetailView):

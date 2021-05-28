@@ -4,7 +4,7 @@ from django.contrib import admin
 from django.forms import ModelForm, ValidationError
 from django.utils.safestring import mark_safe
 
-from .models import Cart, CartProduct, Category, Customer, Product, Subcategory
+from .models import Cart, CartProduct, Category, Customer, Order, Product, Subcategory
 
 
 class CustomerAdminForm(ModelForm):
@@ -109,5 +109,6 @@ admin.site.register(Cart)
 admin.site.register(CartProduct)
 admin.site.register(Category)
 admin.site.register(Customer, CustomerAdmin)
+admin.site.register(Order)
 admin.site.register(Product, ProductAdmin)
 admin.site.register(Subcategory)

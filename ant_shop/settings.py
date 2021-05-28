@@ -40,6 +40,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'products',
+    'crispy_forms',
 ]
 
 AUTH_USER_MODEL = 'products.Customer'
@@ -79,6 +80,7 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'ant_shop.wsgi.application'
 
+CRISPY_TEMPLATE_PACK = 'bootstrap4'
 
 # Database
 # https://docs.djangoproject.com/en/2.2/ref/settings/#databases

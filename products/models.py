@@ -5,6 +5,7 @@ from django.contrib.auth.models import AbstractUser
 from django.core.validators import MaxValueValidator, MinValueValidator
 from django.db import models
 from django.urls import reverse
+from django.utils import timezone
 
 
 def get_product_url(object, viewname):
@@ -26,6 +27,7 @@ class MaxResolutionErrorException(Exception):
 class Customer(AbstractUser):
     phone = models.CharField(max_length=20, null=True, blank=True)
     address = models.CharField(max_length=255, null=True, blank=True)
+    # orders = models.ManyToManyField('Order', related_name='related_order')
 
     @property
     def full_name(self):
@@ -128,3 +130,41 @@ class Cart(models.Model):
 
     def __str__(self):
         return f'Cart of {self.owner}'
+
+
+class Order(models.Model):
+    STATUS_NEW = 'new'
+    STATUS_IN_PROGRESS = 'in_progress'
+    STATUS_READY = 'is_ready'
+    STATUS_COMPLETED = 'completed'
+
+    BUYING_TYPE_SELF = 'self'
+    BUYING_TYPE_DELIVERY = 'delivery'
+
+    STATUS_CHOICES = (
+        (STATUS_NEW, 'New order'),
+        (STATUS_IN_PROGRESS, 'Order in prgress'),
+        (STATUS_READY, 'Order is ready'),
+        (STATUS_COMPLETED, 'Order completed')
+    )
+
+    BUYING_TYPE_CHOICES = (
+        (BUYING_TYPE_SELF, 'Self-pickup'),
+        (BUYING_TYPE_DELIVERY, 'Delivery')
+    )
+
+    customer = models.ForeignKey(Customer, on_delete=models.PROTECT, related_name='related_orders')
+    first_name = models.CharField(max_length=100)
+    last_name = models.CharField(max_length=100)
+    phone = models.CharField(max_length=100)
+    address = models.CharField(max_length=255, null=True, blank=True)
+    cart = models.ForeignKey(Cart, on_delete=models.PROTECT, null=True, blank=True)
+    status = models.CharField(max_length=100, choices=STATUS_CHOICES, default=STATUS_NEW)
+    buying_type = models.CharField(max_length=100, choices=BUYING_TYPE_CHOICES, default=BUYING_TYPE_SELF)
+    comment = models.TextField(null=True, blank=True)
+    created_at = models.DateTimeField(auto_now=True)
+    order_date = models.DateField(default=timezone.now)
+
+    def __str__(self):
+        return str(self.id)
+

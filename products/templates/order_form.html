@@ -1,0 +1,56 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load crispy_forms_tags %}
+
+
+{% block title %}Order{% endblock %}
+
+
+{% block content %}
+
+
+<table class="table table-hover mt-4 mb-4">
+    <thead align="center">
+        <tr>
+            <th scope="col">Product</th>
+            <th scope="col">Quantity</th>
+            <th scope="col">Total price</th>
+        </tr>
+    </thead>
+    <tbody>
+    {% for item in cart.products.all %}
+        <tr id="product" align='center'>
+            <td style="display: flex; justify-content: space-around; align-items: center;">
+                <a href="{{ item.product.get_absolute_url }}">
+                    <img src="{{ item.product.image.url }}" class="img-fluid cart-img" alt="product image">
+                </a>
+                <a style="color: black; text-decoration: none;" href="{{ item.product.get_absolute_url }}">
+                    <h5>{{ item.product.title }}</h5>
+                </a>
+            </td>
+            <td>{{ item.qty }}</td>
+            <td>{{ item.final_price }}$</td>
+        </tr>
+    {% endfor %}
+        <tr>
+            <td><h5><b>Total</b></h5></td>
+            <td align='center'><h5><b>{{ cart.total_products }}</b></h5></td>
+            <td align='center'><h5><b>{{ cart.final_price }}$</b></h5></td>
+        </tr>
+    </tbody>
+</table>
+
+<div style="display: flex; justify-content: center;">
+    <img class="img-fluid mb-2 order-img" src="{% static '/img/order.png' %}" alt="order-now-image"/>
+</div>
+
+<form action="{% url 'make_order' %}" method="POST">
+    {% csrf_token %}
+
+    {{ form|crispy }}
+
+    <input type="submit" class="btn btn-success btn-block mb-4" value="Order">
+</form>
+
+
+{% endblock %}
