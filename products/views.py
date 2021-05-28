@@ -4,7 +4,7 @@ from django.contrib.auth.models import Permission
 from django.contrib.auth.views import PasswordChangeView
 from django.contrib.messages.views import SuccessMessageMixin
 from django.core.mail import mail_admins, send_mail
-from django.db import models
+from django.db import models, transaction
 from django.http import HttpResponseRedirect
 from django.shortcuts import render
 from django.urls import reverse_lazy
@@ -17,12 +17,14 @@ from ant_shop.settings import EMAIL_HOST_USER
 
 def get_customer_cart(request):
     if request.user.is_anonymous:
-        cart = Cart.objects.filter(for_anonymous_user=True).first()
+        cart = Cart.objects.filter(for_anonymous_user=True, in_order=False).first()
         if not cart:
             cart = Cart.objects.create(for_anonymous_user=True)
     else:
         customer = Customer.objects.get(username=request.user.username)
         cart = Cart.objects.filter(owner=customer, in_order=False).first()
+        if not cart:
+            cart = Cart.objects.create(owner=customer)
     return cart
 
 
@@ -115,6 +117,96 @@ class InformCustomerView(FormView):
         mail_admins(subject, message, fail_silently=False)
 
         return render(self.request, 'contact_message.html')
+
+
+class MakeOrderView(View):
+
+    @transaction.atomic
+    def post(self, request, *args, **kwargs):
+        form = OrderForm(request.POST or None)
+        customer = request.user
+        cart = get_customer_cart(request)
+        if form.is_valid():
+            new_order = form.save(commit=False)
+            new_order.first_name = form.cleaned_data['first_name']
+            new_order.last_name = form.cleaned_data['last_name']
+            new_order.email = form.cleaned_data['email']
+            new_order.phone = form.cleaned_data['phone']
+            new_order.address = form.cleaned_data['address']
+            new_order.buying_type = form.cleaned_data['buying_type']
+            new_order.order_date = form.cleaned_data['order_date']
+            new_order.comment = form.cleaned_data['comment']
+
+            if not request.user.is_anonymous:
+                new_order.customer = customer
+            
+            new_order.save()
+
+            products = []
+            for item in cart.products.all():
+                products.append(item.product.title)
+                item.product.qty -= item.qty
+                item.product.save()
+
+            cart.in_order = True
+            cart.save()
+            new_order.cart = cart
+            new_order.save()
+            
+            if not request.user.is_anonymous:
+                customer.related_orders.add(new_order)
+
+            subject_for_admin = f'Some customer of your AntShop bought your product'
+            message_for_admin = f'''
+                Customer details:
+                First name: {new_order.first_name}
+                Last name: {new_order.last_name}
+                Email: {new_order.email}
+                Phone: {new_order.phone}
+                Address: {new_order.address}
+                Order details:
+                Products ({cart.final_price}): {products}
+                Total price: {cart.final_price}
+                Buying type: {new_order.buying_type}
+                Order date: {new_order.order_date}
+                Comment: {new_order.comment}
+            '''
+
+            mail_admins(subject_for_admin, message_for_admin, fail_silently=False)
+
+            subject_for_customer = 'Thank you for the order in AntShop!'
+            message_for_customer = f'''
+                {new_order.first_name} {new_order.last_name}, 
+                thank you for shopping in AntShop! 
+                You buy {cart.final_price} products: {products}
+                Total price: {cart.final_price}
+                Order details:
+                First name: {new_order.first_name}
+                Last name: {new_order.last_name}
+                Email: {new_order.email}
+                Phone: {new_order.phone}
+                Address: {new_order.address}
+                Buying type: {new_order.buying_type}
+                Order date: {new_order.order_date}
+                Comment: {new_order.comment}
+                You can check you order's details in you personal account 
+                https://ant-shop.herokuapp.com/account/
+            '''
+
+            send_mail(
+                subject_for_customer, 
+                message_for_customer, 
+                EMAIL_HOST_USER, 
+                [new_order.email], 
+                fail_silently = False
+            )
+
+            messages.add_message(request, messages.INFO, '''
+                Thank you for the order! Check your email address for a letter with all the details of this order. 
+                You can also see them in your personal account in the ORDERS section.
+            ''')
+            return HttpResponseRedirect('/')
+        return HttpResponseRedirect('/order/')
 
 
 class OrderView(FormView):

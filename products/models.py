@@ -46,7 +46,7 @@ class Category(models.Model):
         verbose_name_plural = 'Categories'
     
     def save(self, *args, **kwargs):
-        self.title = string.capwords(self.title)
+        self.name = string.capwords(self.name)
         super().save(*args, **kwargs)
 
 
@@ -63,7 +63,7 @@ class Subcategory(models.Model):
         verbose_name_plural = 'Subcategories'
     
     def save(self, *args, **kwargs):
-        self.title = string.capwords(self.title)
+        self.name = string.capwords(self.name)
         super().save(*args, **kwargs)
 
 
@@ -153,9 +153,10 @@ class Order(models.Model):
         (BUYING_TYPE_DELIVERY, 'Delivery')
     )
 
-    customer = models.ForeignKey(Customer, on_delete=models.PROTECT, related_name='related_orders')
+    customer = models.ForeignKey(Customer, on_delete=models.PROTECT, related_name='related_orders', null=True, blank=True)
     first_name = models.CharField(max_length=100)
     last_name = models.CharField(max_length=100)
+    email = models.EmailField()
     phone = models.CharField(max_length=100)
     address = models.CharField(max_length=255, null=True, blank=True)
     cart = models.ForeignKey(Cart, on_delete=models.PROTECT, null=True, blank=True)

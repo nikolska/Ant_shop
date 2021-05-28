@@ -8,7 +8,7 @@ from .views import (
     AddToCartView, CartView, ChangeProductQuantityView, ContactView, 
     CustomerAccountView, CustomerCreateView, CustomerDataUpdateView, 
     CustomerPasswordUpdateView, DeleteFromCartView, HomePageView, 
-    InformCustomerView, OrderView, ProductDetailView, ProductListView
+    InformCustomerView, MakeOrderView, OrderView, ProductDetailView, ProductListView
 )
 
 
@@ -33,7 +33,8 @@ urlpatterns = [
     re_path(r'^change-cart-products-quantity/(?P<slug>[-\w]+)/$', ChangeProductQuantityView.as_view(), name='change_product_quantity'),
     re_path(r'^contact-us/$', ContactView.as_view(), name='contact'),
     re_path(r'^inform-me/(?P<slug>[-\w]+)/$', InformCustomerView.as_view(), name='inform_customer'),
-    re_path(r'^order/$', OrderView.as_view(), name='make_order'),
+    re_path(r'^make-order/$', MakeOrderView.as_view(), name='make_order'),
+    re_path(r'^order/$', OrderView.as_view(), name='order_form'),
     re_path(r'^remove-from-cart/(?P<slug>[-\w]+)/$', DeleteFromCartView.as_view(), name='delete_from_cart'),
     re_path(
         r'^products/(?P<category>[-\w]+)/(?P<subcategory>[-\w]+)/(?P<slug>[-\w]+)/$', 

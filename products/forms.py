@@ -82,6 +82,14 @@ class OrderForm(forms.ModelForm):
     class Meta:
         model = Order
         fields = (
-            'first_name', 'last_name', 'phone', 'address', 'buying_type', 'order_date', 'comment'
+            'first_name', 'last_name', 'email', 'phone', 
+            'address', 'buying_type', 'order_date', 'comment'
         )
-
+        labels = {
+            'phone': 'Phone (start with +)'
+        }
+    
+    def clean(self):
+        cleaned_data = super().clean()
+        if not re.fullmatch(r'^\+\d+$', cleaned_data['phone']):
+            self.add_error('phone', 'Start with + . Then digits only!')
