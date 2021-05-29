@@ -1,5 +1,5 @@
 from django.contrib import messages
-from django.contrib.auth.mixins import PermissionRequiredMixin
+from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMixin
 from django.contrib.auth.models import Permission
 from django.contrib.auth.views import PasswordChangeView
 from django.contrib.messages.views import SuccessMessageMixin
@@ -136,7 +136,7 @@ class MakeOrderView(View):
             new_order.buying_type = form.cleaned_data['buying_type']
             new_order.order_date = form.cleaned_data['order_date']
             new_order.comment = form.cleaned_data['comment']
-
+            
             if not request.user.is_anonymous:
                 new_order.customer = customer
 
@@ -317,7 +317,7 @@ class CustomerCreateView(FormView):
         return HttpResponseRedirect(self.get_success_url())
 
 
-class CustomerDataUpdateView(PermissionRequiredMixin, SuccessMessageMixin, UpdateView):
+class CustomerDataUpdateView(LoginRequiredMixin, PermissionRequiredMixin, SuccessMessageMixin, UpdateView):
     model = Customer
     form_class = CustomerUpdateForm
     permission_required = 'products.change_customer'
@@ -326,7 +326,7 @@ class CustomerDataUpdateView(PermissionRequiredMixin, SuccessMessageMixin, Updat
     success_url = reverse_lazy('customer_account')
     
 
-class CustomerOrdersListView(ListView):
+class CustomerOrdersListView(LoginRequiredMixin, ListView):
     model = Order
     template_name = 'customer_orders.html'
 
@@ -335,7 +335,7 @@ class CustomerOrdersListView(ListView):
         return super().dispatch(request, *args, **kwargs)
 
 
-class CustomerPasswordUpdateView(PermissionRequiredMixin, PasswordChangeView):
+class CustomerPasswordUpdateView(LoginRequiredMixin, PermissionRequiredMixin, PasswordChangeView):
     template_name = 'customer_change_password.html'
     success_url = reverse_lazy('customer_account')
     permission_required = 'products.change_customer'
@@ -343,4 +343,3 @@ class CustomerPasswordUpdateView(PermissionRequiredMixin, PasswordChangeView):
     def form_valid(self, form):
         form.save()
         return super().form_valid(form)
-

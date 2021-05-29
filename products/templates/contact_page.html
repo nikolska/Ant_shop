@@ -15,7 +15,9 @@
                 <img class="img-fluid contact-image" src="{% static '/img/phone.png' %}" alt="phone-icon">
             </div>
             <div class="card-body text-dark">
-              <h5 class="card-title" align="center">{{ admin.phone }}</h5>
+                <h5 class="card-title" align="center">
+                    <a class="link-dark" style="text-decoration: none;" href="">{{ admin.phone }}</a>
+                </h5>
             </div>
         </div>
     </div>
@@ -25,7 +27,9 @@
                 <img class="img-fluid contact-image" src="{% static '/img/email.png' %}" alt="email-icon">
             </div>
             <div class="card-body text-dark">
-              <h5 class="card-title" align="center">{{ admin.email }}</h5>
+                <h5 class="card-title" align="center">
+                  <a class="link-dark" style="text-decoration: none;" href="">{{ admin.email }}</a>
+                </h5>
             </div>
         </div>
     </div>

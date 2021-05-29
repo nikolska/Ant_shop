@@ -112,7 +112,7 @@ class CartProduct(models.Model):
     final_price = models.DecimalField(max_digits=9, decimal_places=2)
 
     def __str__(self):
-        return f'{self.product.title} for cart'
+        return self.product.title
 
     def save(self, *args, **kwargs):
         self.final_price = self.qty * self.product.price
@@ -142,7 +142,7 @@ class Order(models.Model):
 
     STATUS_CHOICES = (
         (STATUS_NEW, 'New order'),
-        (STATUS_IN_PROGRESS, 'Order in prgress'),
+        (STATUS_IN_PROGRESS, 'Order in progress'),
         (STATUS_READY, 'Order is ready'),
         (STATUS_COMPLETED, 'Order completed')
     )
@@ -162,7 +162,7 @@ class Order(models.Model):
     address = models.CharField(max_length=255, null=True, blank=True)
     cart = models.ForeignKey(Cart, on_delete=models.PROTECT, null=True, blank=True)
     status = models.CharField(max_length=100, choices=STATUS_CHOICES, default=STATUS_NEW)
-    buying_type = models.CharField(max_length=100, choices=BUYING_TYPE_CHOICES, default=BUYING_TYPE_SELF)
+    buying_type = models.CharField(max_length=100, choices=BUYING_TYPE_CHOICES)
     comment = models.TextField(null=True, blank=True)
     created_at = models.DateTimeField(auto_now=True)
     order_date = models.DateField(default=timezone.now)
