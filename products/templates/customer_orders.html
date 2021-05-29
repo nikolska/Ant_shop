@@ -41,7 +41,29 @@
                             <span>NO</span>
                         {% endif %}
                     </td>
-                    <td class="text-center">{{ order.status }}</td>
+                    <td class="text-center">
+                        {% if order.status == 'new' %}
+                            <div class="progress">
+                                <div class="progress-bar progress-bar-striped bg-success" role="progressbar" 
+                                style="width: 25%" aria-valuenow="25" aria-valuemin="0" aria-valuemax="100"></div>
+                            </div>
+                        {% elif order.status == 'in_progress' %}
+                            <div class="progress">
+                                <div class="progress-bar progress-bar-striped bg-success" role="progressbar" 
+                                style="width: 50%" aria-valuenow="50" aria-valuemin="0" aria-valuemax="100"></div>
+                            </div>
+                        {% elif order.status == 'is_ready' %}
+                            <div class="progress">
+                                <div class="progress-bar progress-bar-striped bg-success" role="progressbar" 
+                                style="width: 75%" aria-valuenow="75" aria-valuemin="0" aria-valuemax="100"></div>
+                            </div>
+                        {% elif order.status == 'completed' %}
+                            <div class="progress">
+                                <div class="progress-bar progress-bar-striped bg-success" role="progressbar" 
+                                style="width: 100%" aria-valuenow="100" aria-valuemin="0" aria-valuemax="100"></div>
+                            </div>
+                        {% endif %}
+                    </td>
                 </tr>
             {% endfor %}
         </tbody>

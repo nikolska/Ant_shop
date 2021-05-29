@@ -331,7 +331,7 @@ class CustomerOrdersListView(LoginRequiredMixin, ListView):
     template_name = 'customer_orders.html'
 
     def dispatch(self, request, *args, **kwargs):
-        self.queryset = self.model.objects.filter(customer=request.user)
+        self.queryset = self.model.objects.filter(customer=request.user).order_by('-status')
         return super().dispatch(request, *args, **kwargs)
 
 
