@@ -32,6 +32,9 @@
                         </a>
                     {% else %}
                         <p class="text-muted">The product is currently out of stock.</p>
+                        <a class="position-relative" style="text-decoration: none;" href="{% url 'add_to_wishlist' product.slug %}">
+                            <button class="btn btn-outline-warning mt-1">Add to wish list</button>
+                        </a>
                     {% endif %}
                 </div>
                <div class="card-footer"><small class="text-muted">{{ product.rating }} ★ ★ ★ ★ ☆</small></div>
