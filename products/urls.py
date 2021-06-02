@@ -15,11 +15,11 @@ from .views import (
 
 urlpatterns = [
     path('', HomePageView.as_view(), name='home_page'),
-    path('account/', CustomerAccountView.as_view(), name='customer_account'),
-    path('account/login/', LoginView.as_view(template_name='login.html'), name='login'),
-    path('account/logout/', LogoutView.as_view(), name='logout'),
-    path('account/orders/', CustomerOrdersListView.as_view(), name='orders'),
-    path('account/registration/', CustomerCreateView.as_view(), name='registration'),
+    re_path(r'^account/$', CustomerAccountView.as_view(), name='customer_account'),
+    re_path(r'^account/login/$', LoginView.as_view(template_name='login.html'), name='login'),
+    re_path(r'^account/logout/$', LogoutView.as_view(), name='logout'),
+    re_path(r'^account/orders/$', CustomerOrdersListView.as_view(), name='orders'),
+    re_path(r'^account/registration/$', CustomerCreateView.as_view(), name='registration'),
     re_path(r'^account/reset-password/$', PasswordResetView.as_view(), name='password_reset'),
     re_path(r'^account/reset-password/done/$', PasswordResetDoneView.as_view(), name='password_reset_done'),
     re_path(
@@ -43,9 +43,5 @@ urlpatterns = [
         ProductDetailView.as_view(), 
         name='product_detail'
     ), 
-    re_path(
-        r'^products/(?P<category>[-\w]+)/(?P<subcategory>[-\w]+)/$', 
-        ProductListView.as_view(), 
-        name='product_list'
-    ),
+    re_path(r'^products/(?P<category>[-\w]+)/$', ProductListView.as_view(), name='product_list'),
 ]

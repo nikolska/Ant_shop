@@ -56,22 +56,24 @@
                     <div class="list-group mb-4">
                         {% for category in categories %}
                             <div class="btn-group dropright m-1">
-                                <button type="button" class="btn btn-secondary dropdown-toggle" data-toggle="dropdown" 
-                                    aria-haspopup="true" aria-expanded="false">
-                                    {{ category.name }}
-                                </button>
-                                <div class="dropdown-menu">
-                                    {% for subcategory in subcategories %}
-                                        {% if subcategory.category == category %}
-                                            <a class="dropdown-item" 
-                                                href="{% url 'product_list' subcategory.category.slug subcategory.slug %}">
-                                                {{ subcategory.name }}
-                                            </a>
-                                        {% endif %}
-                                    {% endfor %}
-                                </div>
+                                <a href="{% url 'product_list' category.slug %}">  
+                                    <button type="button" class="btn btn-secondary dropdown-toggle" style="width: 220px;">
+                                        {{ category.name }}
+                                    </button>
+                                </a> 
                             </div>
                         {% endfor %}
+                        <hr>
+                        {% if subcategory_list %}
+                            <form method="GET">
+                                <div class="d-grid gap-2 col-11 mx-auto">
+                                    {% for subcategory in subcategory_list %}
+                                        <input class="btn btn-outline-secondary btn-sm my-1" style="width: 170px;" 
+                                            type="submit" name="sorting" value="{{ subcategory }}">
+                                    {% endfor %}
+                                </div>
+                            </form>
+                        {% endif %}
                     </div>
                 </div>
                 <div class="col-lg-8">

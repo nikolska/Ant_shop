@@ -11,7 +11,7 @@ from django.urls import reverse_lazy
 from django.views.generic import DetailView, FormView, ListView, TemplateView, UpdateView, View
 
 from .forms import ContactForm, CustomerCreateForm, CustomerUpdateForm, InformForm, OrderForm
-from .models import Cart, CartProduct, Customer, Order, Product, Subcategory
+from .models import Cart, CartProduct, Category, Customer, Order, Product, Subcategory
 from ant_shop.settings import EMAIL_HOST_USER
 
 
@@ -77,6 +77,110 @@ class ChangeProductQuantityView(View):
         recalc_cart(cart)
         messages.add_message(request, messages.INFO, f'Quantity of {product.title} changed')
         return HttpResponseRedirect('/cart/')
+
+
+class ContactView(FormView):
+    form_class = ContactForm
+    template_name = 'contact_page.html'
+
+    def form_valid(self, form):
+        if self.request.user.id is not None:
+            sender = self.request.user.full_name
+            sender_email = self.request.user.email
+        else:
+            sender = form.cleaned_data['sender']
+            sender_email = form.cleaned_data['sender_email']
+        
+        message = form.cleaned_data['message_text']
+
+        subject = f'Message from {sender}, {sender_email}'
+        
+        mail_admins(subject, message, fail_silently=False)
+
+        return render(self.request, 'contact_message.html')
+
+
+class CustomerAccountView(TemplateView):
+    model = Customer
+    template_name = 'customer_account.html'
+
+
+class CustomerCreateView(FormView):
+    model = Customer
+    form_class = CustomerCreateForm
+    template_name = 'customer_create.html'
+    success_url = reverse_lazy('login')
+
+    def form_valid(self, form):
+        first_name = form.cleaned_data['first_name']
+        last_name = form.cleaned_data['last_name']
+        username = form.cleaned_data['username']
+        email = form.cleaned_data['email']
+        password = form.cleaned_data['password']
+        phone = form.cleaned_data['phone']
+        address = form.cleaned_data['address']
+
+        permission = Permission.objects.get(name='Can change user')
+
+        customer = Customer.objects.create_user(
+            first_name=first_name,
+            last_name=last_name,
+            username=username,
+            email=email,
+            phone=phone,
+            address=address
+        )
+
+        customer.set_password(password)
+        customer.user_permissions.add(permission)
+        customer.save()
+
+        Cart.objects.create(owner = customer)
+
+        subject = 'Welcome to AntShop'
+        message = f'''
+            {customer.full_name}, welcome to AntShop! 
+            Hope you are enjoying shopping here.
+            Let's start https://ant-shop.herokuapp.com/
+        '''
+        recepient = str(form['email'].value())
+        send_mail(
+            subject, 
+            message, 
+            EMAIL_HOST_USER, 
+            [recepient], 
+            fail_silently = False
+        )
+
+        return HttpResponseRedirect(self.get_success_url())
+
+
+class CustomerDataUpdateView(LoginRequiredMixin, PermissionRequiredMixin, SuccessMessageMixin, UpdateView):
+    model = Customer
+    form_class = CustomerUpdateForm
+    permission_required = 'products.change_customer'
+    template_name = 'customer_data_update.html'
+    success_message = 'Your personal data has been successfully changed!'
+    success_url = reverse_lazy('customer_account')
+    
+
+class CustomerOrdersListView(LoginRequiredMixin, ListView):
+    model = Order
+    template_name = 'customer_orders.html'
+
+    def dispatch(self, request, *args, **kwargs):
+        self.queryset = self.model.objects.filter(customer=request.user).order_by('-created_at')
+        return super().dispatch(request, *args, **kwargs)
+
+
+class CustomerPasswordUpdateView(LoginRequiredMixin, PermissionRequiredMixin, PasswordChangeView):
+    template_name = 'customer_change_password.html'
+    success_url = reverse_lazy('customer_account')
+    permission_required = 'products.change_customer'
+
+    def form_valid(self, form):
+        form.save()
+        return super().form_valid(form)
 
 
 class DeleteFromCartView(View):
@@ -237,111 +341,38 @@ class ProductListView(ListView):
     template_name = 'product_list.html'
     slug_url_kwarg = 'slug'
 
+    def get_subcategory_list(self, category_slug):
+        category = Category.objects.get(slug=category_slug)
+        subcategory_list = Subcategory.objects.filter(category=category)
+        return subcategory_list
+
     def dispatch(self, request, *args, **kwargs):
-        subcategory = Subcategory.objects.get(slug=kwargs['subcategory'])
-        self.queryset = self.model.objects.filter(category=subcategory)
+        subcategory_list = self.get_subcategory_list(kwargs['category'])
+        self.queryset = self.model.objects.filter(category__in=subcategory_list)
         return super().dispatch(request, *args, **kwargs)
-
-
-class ContactView(FormView):
-    form_class = ContactForm
-    template_name = 'contact_page.html'
-
-    def form_valid(self, form):
-        if self.request.user.id is not None:
-            sender = self.request.user.full_name
-            sender_email = self.request.user.email
-        else:
-            sender = form.cleaned_data['sender']
-            sender_email = form.cleaned_data['sender_email']
-        
-        message = form.cleaned_data['message_text']
-
-        subject = f'Message from {sender}, {sender_email}'
-        
-        mail_admins(subject, message, fail_silently=False)
-
-        return render(self.request, 'contact_message.html')
-
-
-class CustomerAccountView(TemplateView):
-    model = Customer
-    template_name = 'customer_account.html'
-
-
-class CustomerCreateView(FormView):
-    model = Customer
-    form_class = CustomerCreateForm
-    template_name = 'customer_create.html'
-    success_url = reverse_lazy('login')
-
-    def form_valid(self, form):
-        first_name = form.cleaned_data['first_name']
-        last_name = form.cleaned_data['last_name']
-        username = form.cleaned_data['username']
-        email = form.cleaned_data['email']
-        password = form.cleaned_data['password']
-        phone = form.cleaned_data['phone']
-        address = form.cleaned_data['address']
-
-        permission = Permission.objects.get(name='Can change user')
-
-        customer = Customer.objects.create_user(
-            first_name=first_name,
-            last_name=last_name,
-            username=username,
-            email=email,
-            phone=phone,
-            address=address
-        )
-
-        customer.set_password(password)
-        customer.user_permissions.add(permission)
-        customer.save()
-
-        Cart.objects.create(owner = customer)
-
-        subject = 'Welcome to AntShop'
-        message = f'''
-            {customer.full_name}, welcome to AntShop! 
-            Hope you are enjoying shopping here.
-            Let's start https://ant-shop.herokuapp.com/
-        '''
-        recepient = str(form['email'].value())
-        send_mail(
-            subject, 
-            message, 
-            EMAIL_HOST_USER, 
-            [recepient], 
-            fail_silently = False
-        )
-
-        return HttpResponseRedirect(self.get_success_url())
-
-
-class CustomerDataUpdateView(LoginRequiredMixin, PermissionRequiredMixin, SuccessMessageMixin, UpdateView):
-    model = Customer
-    form_class = CustomerUpdateForm
-    permission_required = 'products.change_customer'
-    template_name = 'customer_data_update.html'
-    success_message = 'Your personal data has been successfully changed!'
-    success_url = reverse_lazy('customer_account')
     
+    def get_context_data(self, **kwargs):
+        subcategory_list = self.get_subcategory_list(self.kwargs['category'])
+        ctx = super().get_context_data(**kwargs)
+        ctx['subcategory_list'] = subcategory_list
+        return ctx
+    
+    def get_queryset(self):
+        if self.request.GET.get('sorting'):
+            sort = self.request.GET.get('sorting')
+            category = Subcategory.objects.get(name=sort)
+            queryset = self.model.objects.filter(category=category)  
+            return queryset
+        return self.queryset
 
-class CustomerOrdersListView(LoginRequiredMixin, ListView):
-    model = Order
-    template_name = 'customer_orders.html'
-
-    def dispatch(self, request, *args, **kwargs):
-        self.queryset = self.model.objects.filter(customer=request.user).order_by('-created_at')
-        return super().dispatch(request, *args, **kwargs)
-
-
-class CustomerPasswordUpdateView(LoginRequiredMixin, PermissionRequiredMixin, PasswordChangeView):
-    template_name = 'customer_change_password.html'
-    success_url = reverse_lazy('customer_account')
-    permission_required = 'products.change_customer'
-
-    def form_valid(self, form):
-        form.save()
-        return super().form_valid(form)
+    # def get(self, request, *args, **kwargs):
+    #     self.object_list = self.get_queryset()
+    #     sort = request.GET.get('sorting')
+    #     if sort:
+    #         subcategory_list = self.get_subcategory_list(self.kwargs['category'])
+    #         for category in subcategory_list:
+    #             if sort == category:
+    #                 self.queryset = self.model.objects.filter(category=category)    
+    #         return render(request, 'product_list.html')
+    #     context = self.get_context_data()
+    #     return self.render_to_response(context)
