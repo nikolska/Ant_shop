@@ -173,3 +173,13 @@ class Order(models.Model):
     def __str__(self):
         return str(self.id)
 
+
+class Wish_List(models.Model):
+    owner = models.ForeignKey(Customer, on_delete=models.CASCADE)
+    products = models.ManyToManyField(Product, blank=True)
+    total_products = models.PositiveIntegerField(default=0)
+    for_anonymous_user = models.BooleanField(default=False)
+
+    def __str__(self):
+        return f'{self.owner} wish list'
+

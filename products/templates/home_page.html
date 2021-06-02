@@ -46,7 +46,10 @@
                     {% if product.availability %}
                         <p><b>Availability:</b> {{ product.qty }}</p>
                         <a class="position-relative" href="{% url 'add_to_cart' product.slug %}">
-                            <button class="btn btn-outline-secondary">Add to cart</button>
+                            <button class="btn btn-outline-secondary mb-2">Add to cart</button>
+                        </a>
+                        <a class="position-relative" style="text-decoration: none;" href="{% url 'add_to_wishlist' product.slug %}">
+                            <button class="btn btn-outline-warning">Add to wish list</button>
                         </a>
                     {% else %}
                         <p class="text-muted">The product is currently out of stock.</p>

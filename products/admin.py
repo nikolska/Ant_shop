@@ -4,7 +4,7 @@ from django.contrib import admin
 from django.forms import ModelForm, ValidationError
 from django.utils.safestring import mark_safe
 
-from .models import Cart, CartProduct, Category, Customer, Order, Product, Subcategory
+from .models import Cart, CartProduct, Category, Customer, Order, Product, Subcategory, Wish_List
 
 
 class CartAdmin(admin.ModelAdmin):
@@ -147,6 +147,12 @@ class SubcategoryAdmin(admin.ModelAdmin):
     search_fields = ('name',)
 
 
+class Wish_ListAdmin(admin.ModelAdmin):
+    list_display = ('owner', 'total_products')
+    list_filter = ('owner',)
+    search_fields = ('owner',)
+
+
 admin.site.register(Cart, CartAdmin)
 admin.site.register(CartProduct, CartProductAdmin)
 admin.site.register(Category, CategoryAdmin)
@@ -154,3 +160,4 @@ admin.site.register(Customer, CustomerAdmin)
 admin.site.register(Order, OrderAdmin)
 admin.site.register(Product, ProductAdmin)
 admin.site.register(Subcategory, SubcategoryAdmin)
+admin.site.register(Wish_List, Wish_ListAdmin)

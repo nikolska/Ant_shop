@@ -11,7 +11,7 @@ from django.urls import reverse_lazy
 from django.views.generic import DetailView, FormView, ListView, TemplateView, UpdateView, View
 
 from .forms import ContactForm, CustomerCreateForm, CustomerUpdateForm, InformForm, OrderForm
-from .models import Cart, CartProduct, Category, Customer, Order, Product, Subcategory
+from .models import Cart, CartProduct, Category, Customer, Order, Product, Subcategory, Wish_List
 from ant_shop.settings import EMAIL_HOST_USER
 
 
@@ -28,6 +28,19 @@ def get_customer_cart(request):
     return cart
 
 
+def get_customer_wishlist(request):
+    if request.user.is_anonymous:
+        wishlist = Wish_List.objects.filter(for_anonymous_user=True).first()
+        if not wishlist:
+            wishlist = Wish_List.objects.create(for_anonymous_user=True)
+    else:
+        customer = Customer.objects.get(username=request.user.username)
+        wishlist = Wish_List.objects.get(owner=customer)
+        if not wishlist:
+            wishlist = Wish_List.objects.create(owner=customer)
+    return wishlist
+
+
 def recalc_cart(cart):
     cart_data = cart.products.aggregate(models.Sum('final_price'), models.Sum('qty'))
     if cart_data.get('final_price__sum'):
@@ -36,6 +49,12 @@ def recalc_cart(cart):
         cart.final_price = 0
     cart.total_products = cart_data['qty__sum']
     cart.save()
+
+
+def recalc_wishlist(wishlist):
+    wishlist_data = wishlist.products.aggregate(models.Count('id'))
+    wishlist.total_products = wishlist_data['id__count']
+    wishlist.save()
 
 
 class AddToCartView(View):
@@ -53,6 +72,16 @@ class AddToCartView(View):
         recalc_cart(cart)
         messages.add_message(request, messages.INFO, f'{product.title} added to cart')
         return HttpResponseRedirect('/cart/')
+
+
+class AddToWishListView(View):
+    def get(self, request, *args, **kwargs):
+        wishlist = get_customer_wishlist(request)
+        product = Product.objects.get(slug=kwargs.get('slug'))
+        wishlist.products.add(product)
+        recalc_wishlist(wishlist)
+        messages.add_message(request, messages.INFO, f'{product.title} added to wish list')
+        return HttpResponseRedirect('/wish-list/')
 
 
 class CartView(View):
@@ -199,6 +228,16 @@ class DeleteFromCartView(View):
         return HttpResponseRedirect('/cart/')
 
 
+class DeleteFromWishListView(View):
+    def get(self, request, *args, **kwargs):
+        wishlist = get_customer_wishlist(request)
+        product = Product.objects.get(slug=kwargs.get('slug'))
+        wishlist.products.remove(product)
+        recalc_wishlist(wishlist)
+        messages.add_message(request, messages.INFO, f'{product.title} removed from wish list')
+        return HttpResponseRedirect('/wish-list/')
+
+
 class HomePageView(TemplateView):
     template_name = 'home_page.html'
 
@@ -337,7 +376,7 @@ class ProductDetailView(DetailView):
 
 class ProductListView(ListView):
     model = Product
-    paginate_by = 3
+    paginate_by = 30
     template_name = 'product_list.html'
     slug_url_kwarg = 'slug'
 
@@ -365,14 +404,10 @@ class ProductListView(ListView):
             return queryset
         return self.queryset
 
-    # def get(self, request, *args, **kwargs):
-    #     self.object_list = self.get_queryset()
-    #     sort = request.GET.get('sorting')
-    #     if sort:
-    #         subcategory_list = self.get_subcategory_list(self.kwargs['category'])
-    #         for category in subcategory_list:
-    #             if sort == category:
-    #                 self.queryset = self.model.objects.filter(category=category)    
-    #         return render(request, 'product_list.html')
-    #     context = self.get_context_data()
-    #     return self.render_to_response(context)
+
+class WishListView(View):
+    def get(self, request, *args, **kwargs):
+        wishlist = get_customer_wishlist(request)
+        ctx = {'wishlist': wishlist}
+        return render(request, 'wishlist_view.html', ctx)
+

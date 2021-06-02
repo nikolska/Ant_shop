@@ -5,11 +5,11 @@ from django.contrib.auth.views import (
 from django.urls import path, re_path
 
 from .views import (
-    AddToCartView, CartView, ChangeProductQuantityView, ContactView, 
-    CustomerAccountView, CustomerCreateView, CustomerDataUpdateView,
-    CustomerOrdersListView,CustomerPasswordUpdateView, DeleteFromCartView, 
-    HomePageView, InformCustomerView, MakeOrderView, OrderView, 
-    ProductDetailView, ProductListView
+    AddToCartView, AddToWishListView, CartView, ChangeProductQuantityView, 
+    ContactView, CustomerAccountView, CustomerCreateView, CustomerDataUpdateView,
+    CustomerOrdersListView,CustomerPasswordUpdateView, DeleteFromCartView,
+    DeleteFromWishListView, HomePageView, InformCustomerView, MakeOrderView, 
+    OrderView, ProductDetailView, ProductListView, WishListView
 )
 
 
@@ -31,6 +31,7 @@ urlpatterns = [
     re_path(r'^account/update-password/(?P<pk>\d+)/$', CustomerPasswordUpdateView.as_view(), name='update_customer_password'),
     re_path(r'^account/update-personal-data/(?P<pk>\d+)/$', CustomerDataUpdateView.as_view(), name='update_customer_data'),
     re_path(r'^add-to-cart/(?P<slug>[-\w]+)/$', AddToCartView.as_view(), name='add_to_cart'),
+    re_path(r'^add-to-wish-list/(?P<slug>[-\w]+)/$', AddToWishListView.as_view(), name='add_to_wishlist'),
     re_path(r'^cart/$', CartView.as_view(), name='cart_view'),
     re_path(r'^change-cart-products-quantity/(?P<slug>[-\w]+)/$', ChangeProductQuantityView.as_view(), name='change_product_quantity'),
     re_path(r'^contact-us/$', ContactView.as_view(), name='contact'),
@@ -38,10 +39,12 @@ urlpatterns = [
     re_path(r'^make-order/$', MakeOrderView.as_view(), name='make_order'),
     re_path(r'^order/$', OrderView.as_view(), name='order_form'),
     re_path(r'^remove-from-cart/(?P<slug>[-\w]+)/$', DeleteFromCartView.as_view(), name='delete_from_cart'),
+    re_path(r'^remove-from-wish-list/(?P<slug>[-\w]+)/$', DeleteFromWishListView.as_view(), name='delete_from_wishlist'),
     re_path(
         r'^products/(?P<category>[-\w]+)/(?P<subcategory>[-\w]+)/(?P<slug>[-\w]+)/$', 
         ProductDetailView.as_view(), 
         name='product_detail'
     ), 
     re_path(r'^products/(?P<category>[-\w]+)/$', ProductListView.as_view(), name='product_list'),
+    re_path(r'^wish-list/$', WishListView.as_view(), name='wish_list'),
 ]

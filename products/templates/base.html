@@ -36,6 +36,9 @@
                 <div class="nav justify-content-end collapse navbar-collapse" id="navbarResponsive">
                     <ul class="navbar-nav ml-auto">
                         <li class="nav-item"><a class="nav-link" href="{% url 'home_page' %}">Home</a></li>
+                        <li class="nav-item"><a class="nav-link" href="{% url 'wish_list' %}">
+                            Wish list <span class="badge badge-pill bg-warning text-dark">{{ wishlist.total_products }}</span>
+                        </a></li>
                         <li class="nav-item"><a class="nav-link" href="{% url 'cart_view' %}">
                                 Cart <span class="badge badge-pill badge-danger">{{ cart.total_products }}</span>
                         </a></li>
@@ -63,8 +66,8 @@
                                 </a> 
                             </div>
                         {% endfor %}
-                        <hr>
                         {% if subcategory_list %}
+                            <hr>
                             <form method="GET">
                                 <div class="d-grid gap-2 col-11 mx-auto">
                                     {% for subcategory in subcategory_list %}
