@@ -29,12 +29,12 @@ def get_customer_cart(request):
 
 
 def recalc_cart(cart):
-    cart_data = cart.products.aggregate(models.Sum('final_price'), models.Count('id'))
+    cart_data = cart.products.aggregate(models.Sum('final_price'), models.Sum('qty'))
     if cart_data.get('final_price__sum'):
         cart.final_price = cart_data['final_price__sum']
     else:
         cart.final_price = 0
-    cart.total_products = cart_data['id__count']
+    cart.total_products = cart_data['qty__sum']
     cart.save()
 
 
@@ -207,12 +207,14 @@ class MakeOrderView(View):
 
             messages.add_message(request, messages.INFO, '''
                 Thank you for the order! Check your email address for a letter with all the details of this order. 
-                You can also see them in your personal account in the ORDERS section.
+                You can also see them in your personal account in the <a href="/account/orders/">ORDERS</a> section.
             ''')
             return HttpResponseRedirect('/')
         messages.add_message(request, messages.ERROR, '''
-            Please, enter a valid data! Email must contains @ and server domain name.
-            Phone number must start with + and then only digits. Date should be no earlier than today.
+            Please, enter a valid data! <br>
+            Email must contains @ and server domain name. <br>
+            Phone number must start with + and then only digits. <br>
+            Date should be at least 2 working days, excluding weekends and holidays.
         ''')
         return HttpResponseRedirect('/order/')
 
@@ -331,7 +333,7 @@ class CustomerOrdersListView(LoginRequiredMixin, ListView):
     template_name = 'customer_orders.html'
 
     def dispatch(self, request, *args, **kwargs):
-        self.queryset = self.model.objects.filter(customer=request.user).order_by('-status')
+        self.queryset = self.model.objects.filter(customer=request.user).order_by('-created_at')
         return super().dispatch(request, *args, **kwargs)
 
 

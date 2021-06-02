@@ -79,14 +79,14 @@
                         {% for message in messages %}
                             {% if message.level == DEFAULT_MESSAGE_LEVELS.ERROR %}
                                 <div class="alert alert-danger alert-dismissible fade show my-4" role="alert">
-                                    <strong>{{ message }}</strong>
+                                    <strong>{{ message|safe }}</strong>
                                     <button type="button" class="close" data-dismiss="alert" aria-label="Close">
                                     <span aria-hidden="true">&times;</span>
                                     </button>
                                 </div>
                             {% else %}
                                 <div class="alert alert-success alert-dismissible fade show my-4" role="alert">
-                                    <strong>{{ message }}</strong>
+                                    <strong>{{ message|safe }}</strong>
                                     <button type="button" class="close" data-dismiss="alert" aria-label="Close">
                                     <span aria-hidden="true">&times;</span>
                                     </button>

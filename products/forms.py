@@ -1,5 +1,5 @@
 import re
-from datetime import datetime
+from datetime import datetime, timedelta
 
 from django import forms
 
@@ -76,7 +76,7 @@ class OrderForm(forms.ModelForm):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.fields['order_date'].label = 'Date of receipt of the order'
+        self.fields['order_date'].label = 'Date of receipt of the order (at least 2 working days, excluding weekends and holidays)'
 
     order_date = forms.DateField(widget=forms.TextInput(attrs={'type': 'date'}))
 
@@ -94,5 +94,6 @@ class OrderForm(forms.ModelForm):
         cleaned_data = super().clean()
         if not re.fullmatch(r'^\+\d+$', cleaned_data['phone']):
             self.add_error('phone', 'Start with + . Then digits only!')
-        if cleaned_data['order_date'] < datetime.today().date():
+        if cleaned_data['order_date'] < (datetime.today().date() + timedelta(days=2)) or cleaned_data['order_date'].weekday() > 4:
             self.add_error('order_date', 'Please, check the correct date!')
+

@@ -14,8 +14,8 @@ class CartAdmin(admin.ModelAdmin):
 
 
 class CartProductAdmin(admin.ModelAdmin):
-    list_display = ('product', 'customer', 'cart', 'qty', 'final_price', 'get_small_image')
-    list_filter = ('product', 'customer', 'cart')
+    list_display = ('product', 'customer', 'qty', 'final_price', 'get_small_image')
+    list_filter = ('product', 'customer')
     search_fields = ('product',)
     readonly_fields = ('get_image',)
 
@@ -58,7 +58,7 @@ class CustomerAdmin(admin.ModelAdmin):
 
 
 class OrderAdmin(admin.ModelAdmin):
-    list_display = ('customer', 'cart', 'email', 'status', 'buying_type', 'created_at', 'order_date')
+    list_display = ('customer', 'email', 'status', 'buying_type', 'created_at', 'order_date')
     list_filter = ('status', 'buying_type', 'created_at', 'order_date')
     search_fields = ('customer', 'first_name', 'last_name', 'email', 'phone', 'address')
 
