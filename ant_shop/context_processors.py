@@ -9,6 +9,6 @@ def base_page_info(request):
         'categories': Category.objects.all(),
         'subcategories': Subcategory.objects.all(),
         'products': Product.objects.order_by('-creation_date')[:9],
-        # 'wishlist': get_customer_wishlist(request),
+        'wishlist': get_customer_wishlist(request),
     }
     return ctx
