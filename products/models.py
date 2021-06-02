@@ -175,7 +175,7 @@ class Order(models.Model):
 
 
 class Wish_List(models.Model):
-    owner = models.ForeignKey(Customer, on_delete=models.CASCADE)
+    owner = models.ForeignKey(Customer, on_delete=models.CASCADE, null=True)
     products = models.ManyToManyField(Product, blank=True)
     total_products = models.PositiveIntegerField(default=0)
     for_anonymous_user = models.BooleanField(default=False)
