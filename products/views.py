@@ -71,7 +71,7 @@ class AddToCartView(View):
             cart.products.add(cart_product)
         recalc_cart(cart)
         messages.add_message(request, messages.INFO, f'{product.title} added to cart')
-        return HttpResponseRedirect('/cart/')
+        return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
 
 
 class AddToWishListView(View):
@@ -81,7 +81,7 @@ class AddToWishListView(View):
         wishlist.products.add(product)
         recalc_wishlist(wishlist)
         messages.add_message(request, messages.INFO, f'{product.title} added to wish list')
-        return HttpResponseRedirect('/wish-list/')
+        return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
 
 
 class CartView(View):
@@ -225,7 +225,7 @@ class DeleteFromCartView(View):
         cart_product.delete()
         recalc_cart(cart)
         messages.add_message(request, messages.INFO, f'{product.title} removed from cart')
-        return HttpResponseRedirect('/cart/')
+        return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
 
 
 class DeleteFromWishListView(View):
@@ -235,7 +235,7 @@ class DeleteFromWishListView(View):
         wishlist.products.remove(product)
         recalc_wishlist(wishlist)
         messages.add_message(request, messages.INFO, f'{product.title} removed from wish list')
-        return HttpResponseRedirect('/wish-list/')
+        return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
 
 
 class HomePageView(TemplateView):

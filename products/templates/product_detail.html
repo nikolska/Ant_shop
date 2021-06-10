@@ -22,7 +22,26 @@
         <table class="table">
             <thead>
               <tr>
-                <th scope="col"><h3>{{ product.title }}</h3></th>
+                <th scope="col" colspan="2">
+                  <div style="display:flex; justify-content:space-between; align-items:center;">
+                    <h3>{{ product.title }}</h3>
+                    {% if product in wishlist.products.all %}
+                        <a class="position-relative" style="text-decoration: none;" 
+                            href="{% url 'delete_from_wishlist' product.slug %}">
+                            <button class="btn btn-outline-warning mt-1" style="border-color: rgb(245, 243, 243);">
+                                <span>&#11088;</span>
+                            </button>
+                        </a> 
+                    {% else %} 
+                        <a class="position-relative" style="text-decoration: none;" 
+                            href="{% url 'add_to_wishlist' product.slug %}">
+                            <button class="btn btn-outline-warning mt-1" style="border-color: rgb(245, 243, 243);">
+                                <span style="font-size:150%;color:black;">&#9734;</span>
+                            </button>
+                        </a> 
+                    {% endif %}
+                  </div>
+                </th>
                 <th scope="col"></th>
               </tr>
             </thead>
@@ -49,18 +68,12 @@
         </table>
         {% if product.availability %}
           <div class="d-grid gap-2 d-md-flex justify-content-md-end">
-            <a class="nav justify-content-end mt-2" style="text-decoration: none;" href="">
-              <button class="btn btn-outline-warning">Add to wish list</button>
-            </a>
             <a class="nav justify-content-end mt-2" style="text-decoration: none;" href="{% url 'add_to_cart' product.slug %}">
               <button class="btn btn-outline-danger">Add to cart</button>
             </a>
           </div>
         {% else %}
           <div class="d-grid gap-2 d-md-flex justify-content-md-end">
-            <a class="nav justify-content-end mt-2" style="text-decoration: none;" href="{% url 'add_to_wishlist' product.slug %}">
-              <button class="btn btn-outline-warning">Add to wish list</button>
-            </a>
             <a class="nav justify-content-end mt-2" style="text-decoration: none;" href="{% url 'inform_customer' product.slug %}">
               <button class="btn btn-outline-danger">Inform me about product availability</button>
             </a>

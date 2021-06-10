@@ -1,4 +1,5 @@
 {% extends 'base.html' %}
+{% load static %}
 
 
 {% block title %}Your orders{% endblock %}
@@ -36,9 +37,9 @@
                     <td class="text-center">{{ order.cart.final_price }}$</td>
                     <td class="text-center">
                         {% if order.buying_type == 'delivery' %}
-                            <span>YES</span>
+                            <img class="img-fluid icon" src="{% static '/img/delivery.png' %}" alt="delivery-icon">
                         {% else %}
-                            <span>NO</span>
+                            <img class="img-fluid icon" src="{% static '/img/self-pick-up.png' %}" alt="self-pick-up-icon">
                         {% endif %}
                     </td>
                     <td class="text-center">
