@@ -200,7 +200,7 @@ class CustomerOrdersListView(LoginRequiredMixin, ListView):
     template_name = 'customer_orders.html'
 
     def dispatch(self, request, *args, **kwargs):
-        self.queryset = self.model.objects.filter(customer=request.user).order_by('-created_at')
+        self.queryset = self.model.objects.filter(customer=request.user).order_by('-order_date')
         return super().dispatch(request, *args, **kwargs)
 
 
@@ -428,9 +428,19 @@ class ProductListView(ListView):
         return self.queryset
 
 
+class RateProductView(View):
+    def post(self, request, *args, **kwargs):
+        customer_rating = request.POST.get('customer_rating')
+        product = Product.objects.get(slug=kwargs.get('slug'))
+        new_rating = (product.rating + float(customer_rating)) / 2
+        product.rating = new_rating
+        product.save()
+        messages.add_message(request, messages.INFO, f'Thank you for rate {product.title}!')
+        return HttpResponseRedirect('/account/orders/')
+        
+
 class WishListView(View):
     def get(self, request, *args, **kwargs):
         wishlist = get_customer_wishlist(request)
         ctx = {'wishlist': wishlist}
         return render(request, 'wishlist_view.html', ctx)
-

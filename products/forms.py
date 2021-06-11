@@ -10,6 +10,9 @@ class CommentForm(forms.ModelForm):
     class Meta:
         model = Comment
         fields = ['comment_text', 'rating']
+        labels = {
+            'comment_text': 'Your comment'
+        }
     
     def clean(self):
         cleaned_data = super().clean()

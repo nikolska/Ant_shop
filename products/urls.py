@@ -9,7 +9,7 @@ from .views import (
     ContactView, CustomerAccountView, CustomerCreateView, CustomerDataUpdateView,
     CustomerOrdersListView,CustomerPasswordUpdateView, DeleteFromCartView,
     DeleteFromWishListView, HomePageView, InformCustomerView, MakeOrderView, 
-    OrderView, ProductDetailView, ProductListView, WishListView
+    OrderView, ProductDetailView, ProductListView, RateProductView, WishListView
 )
 
 
@@ -46,5 +46,6 @@ urlpatterns = [
         name='product_detail'
     ), 
     re_path(r'^products/(?P<category>[-\w]+)/$', ProductListView.as_view(), name='product_list'),
+    re_path(r'^rate-the-product/(?P<slug>[-\w]+)/$', RateProductView.as_view(), name='rate_product'),
     re_path(r'^wish-list/$', WishListView.as_view(), name='wish_list'),
 ]

@@ -57,7 +57,28 @@
               </tr>
               <tr>
                 <td><b>Rating:</b></td>
-                <td>{{ product.rating }}</td>
+                <td>
+                  {{ product.rating }}
+                  {% if product.rating <= 2 %}
+                      ★ ☆ ☆ ☆ ☆
+                  {% elif product.rating <= 3 %}
+                      ★ &#x272D; ☆ ☆ ☆
+                  {% elif product.rating <= 4 %}
+                      ★ ★ ☆ ☆ ☆
+                  {% elif product.rating <= 5 %}
+                      ★ ★ &#x272D; ☆ ☆
+                  {% elif product.rating <= 6 %}
+                       ★ ★ ★ ☆ ☆
+                  {% elif product.rating <= 7 %}
+                      ★ ★ ★ &#x272D; ☆
+                  {% elif product.rating <= 8 %}
+                      ★ ★ ★ ★ ☆
+                  {% elif product.rating <= 9 %}
+                      ★ ★ ★ ★ &#x272D;
+                  {% else %}
+                      ★ ★ ★ ★ ★
+                  {% endif %}
+                </td>
               </tr>
               {% if product.availability %}
                 <tr>
@@ -94,7 +115,26 @@
         {% for comment in comments %}
           <div class="card mb-3">
             <div class="card-header">
-              {{ comment.rating}} ★ ★ ★ ★ ☆
+              {{ comment.rating }}
+              {% if comment.rating <= 2 %}
+                  ★ ☆ ☆ ☆ ☆
+              {% elif comment.rating <= 3 %}
+                  ★ &#x272D; ☆ ☆ ☆
+              {% elif comment.rating <= 4 %}
+                  ★ ★ ☆ ☆ ☆
+              {% elif comment.rating <= 5 %}
+                  ★ ★ &#x272D; ☆ ☆
+              {% elif comment.rating <= 6 %}
+                  ★ ★ ★ ☆ ☆
+              {% elif comment.rating <= 7 %}
+                  ★ ★ ★ &#x272D; ☆
+              {% elif comment.rating <= 8 %}
+                  ★ ★ ★ ★ ☆
+              {% elif comment.rating <= 9 %}
+                  ★ ★ ★ ★ &#x272D;
+              {% else %}
+                  ★ ★ ★ ★ ★
+              {% endif %}
             </div>
             <div class="card-body">
               <p class="card-text">{{ comment.comment_text }}</p>

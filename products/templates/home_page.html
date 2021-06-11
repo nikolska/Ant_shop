@@ -54,7 +54,28 @@
                     {% endif %}
                 </div>
                 <div class="card-footer" style="display:flex; justify-content:space-between; align-items:center;">
-                    <small class="text-muted">{{ product.rating }} ★ ★ ★ ★ ☆</small>
+                    <small class="text-muted">
+                        {{ product.rating }}
+                        {% if product.rating <= 2 %}
+                            ★ ☆ ☆ ☆ ☆
+                        {% elif product.rating <= 3 %}
+                            ★ &#x272D; ☆ ☆ ☆
+                        {% elif product.rating <= 4 %}
+                            ★ ★ ☆ ☆ ☆
+                        {% elif product.rating <= 5 %}
+                            ★ ★ &#x272D; ☆ ☆
+                        {% elif product.rating <= 6 %}
+                            ★ ★ ★ ☆ ☆
+                        {% elif product.rating <= 7 %}
+                            ★ ★ ★ &#x272D; ☆
+                        {% elif product.rating <= 8 %}
+                            ★ ★ ★ ★ ☆
+                        {% elif product.rating <= 9 %}
+                            ★ ★ ★ ★ &#x272D;
+                        {% else %}
+                            ★ ★ ★ ★ ★
+                        {% endif %}
+                    </small>
                     {% if product in wishlist.products.all %}
                         <a class="position-relative" style="text-decoration: none;" 
                             href="{% url 'delete_from_wishlist' product.slug %}">
