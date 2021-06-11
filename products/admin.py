@@ -4,7 +4,7 @@ from django.contrib import admin
 from django.forms import ModelForm, ValidationError
 from django.utils.safestring import mark_safe
 
-from .models import Cart, CartProduct, Category, Customer, Order, Product, Subcategory, Wish_List
+from .models import Cart, CartProduct, Category, Comment, Customer, Order, Product, Subcategory, Wish_List
 
 
 class CartAdmin(admin.ModelAdmin):
@@ -33,6 +33,13 @@ class CategoryAdmin(admin.ModelAdmin):
     list_display = ('name', 'slug')
     search_fields = ('name',)
 
+
+
+class CommentAdmin(admin.ModelAdmin):
+    list_display = ('date', 'product', 'author', 'rating')
+    list_filter = ('date', 'rating', 'product')
+    search_fields = ('product', 'author', 'comment_text')
+ 
 
 class CustomerAdminForm(ModelForm):
     def __init__(self, *args, **kwargs):
@@ -156,6 +163,7 @@ class Wish_ListAdmin(admin.ModelAdmin):
 admin.site.register(Cart, CartAdmin)
 admin.site.register(CartProduct, CartProductAdmin)
 admin.site.register(Category, CategoryAdmin)
+admin.site.register(Comment, CommentAdmin)
 admin.site.register(Customer, CustomerAdmin)
 admin.site.register(Order, OrderAdmin)
 admin.site.register(Product, ProductAdmin)

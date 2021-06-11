@@ -183,3 +183,16 @@ class Wish_List(models.Model):
     def __str__(self):
         return f'{self.owner} wish list'
 
+
+class Comment(models.Model):
+    product = models.ForeignKey(Product, on_delete=models.CASCADE)
+    author = models.ForeignKey(Customer, on_delete=models.SET_NULL, null=True, blank=True)
+    comment_text = models.TextField()
+    rating = models.FloatField(default=1.0, validators=[MinValueValidator(0.0), MaxValueValidator(10)])
+    date = models.DateTimeField(auto_now=True)
+
+    def __str__(self):
+        return f'{self.pk}'
+
+    class Meta:
+        ordering = ['-date']

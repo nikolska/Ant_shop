@@ -3,7 +3,18 @@ from datetime import datetime, timedelta
 
 from django import forms
 
-from .models import Customer, Order
+from .models import Comment, Customer, Order
+
+
+class CommentForm(forms.ModelForm):
+    class Meta:
+        model = Comment
+        fields = ['comment_text', 'rating']
+    
+    def clean(self):
+        cleaned_data = super().clean()
+        if cleaned_data['rating'] < 1 or cleaned_data['rating'] > 10:
+            self.add_error('rating', 'Please, select a rating from 1.0 to 10!')
 
 
 class ContactForm(forms.Form):

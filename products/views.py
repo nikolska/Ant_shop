@@ -5,13 +5,15 @@ from django.contrib.auth.views import PasswordChangeView
 from django.contrib.messages.views import SuccessMessageMixin
 from django.core.mail import mail_admins, send_mail
 from django.db import models, transaction
+from django.forms.forms import Form
 from django.http import HttpResponseRedirect
 from django.shortcuts import render
 from django.urls import reverse_lazy
 from django.views.generic import DetailView, FormView, ListView, TemplateView, UpdateView, View
+from django.views.generic.edit import CreateView
 
-from .forms import ContactForm, CustomerCreateForm, CustomerUpdateForm, InformForm, OrderForm
-from .models import Cart, CartProduct, Category, Customer, Order, Product, Subcategory, Wish_List
+from .forms import CommentForm, ContactForm, CustomerCreateForm, CustomerUpdateForm, InformForm, OrderForm
+from .models import Cart, CartProduct, Category, Comment, Customer, Order, Product, Subcategory, Wish_List
 from ant_shop.settings import EMAIL_HOST_USER
 
 
@@ -367,11 +369,32 @@ class OrderView(FormView):
     template_name = 'order_form.html'
 
 
-class ProductDetailView(DetailView):
+class ProductDetailView(DetailView, FormView):
     model = Product
+    form_class = CommentForm
     context_object_name = 'product'
     template_name = 'product_detail.html'
     slug_url_kwarg = 'slug'
+
+    def get_context_data(self, **kwargs):
+        comments = Comment.objects.filter(product=self.object)
+        ctx = super().get_context_data(**kwargs)
+        ctx['comments'] = comments
+        return ctx
+    
+    def form_valid(self, form, **kwargs):
+        comment_text = form.cleaned_data['comment_text']
+        rating = form.cleaned_data['rating']
+
+        if not self.request.user.is_anonymous:    
+            Comment.objects.create(
+                product=self.get_object(), author=self.request.user,
+                comment_text=comment_text, rating=rating
+            )
+        else:
+            Comment.objects.create(product=self.get_object(), comment_text=comment_text, rating=rating)
+        
+        return HttpResponseRedirect(self.request.META.get('HTTP_REFERER'))
 
 
 class ProductListView(ListView):
