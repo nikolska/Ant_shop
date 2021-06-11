@@ -80,7 +80,8 @@ class ProductCategoryFilter(admin.SimpleListFilter):
 
     def queryset(self, request, queryset):
         if self.value():
-            return queryset.filter(category__id__exact=self.value())
+            category = Category.objects.get(pk=self.value())
+            return queryset.filter(category__in=Subcategory.objects.filter(category=category))
         else:
             return queryset
 
@@ -133,8 +134,8 @@ class ProductAdminForm(ModelForm):
 class ProductAdmin(admin.ModelAdmin):
     change_form_template = 'admin.html'
     form = ProductAdminForm
-    list_display = ('title', 'category', 'price', 'code', 'availability', 'qty', 'get_small_image')
-    list_filter = ('availability', ProductCategoryFilter, 'category')
+    list_display = ('title', 'category', 'price', 'code', 'rating', 'availability', 'qty', 'get_small_image')
+    list_filter = ('availability', ProductCategoryFilter, 'category', 'rating')
     search_fields = ('title',)
     readonly_fields = ('get_image',)
 
