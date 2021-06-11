@@ -166,7 +166,8 @@ class CustomerCreateView(FormView):
         customer.user_permissions.add(permission)
         customer.save()
 
-        Cart.objects.create(owner = customer)
+        Cart.objects.create(owner=customer)
+        Wish_List.objects.create(owner=customer)
 
         subject = 'Welcome to AntShop'
         message = f'''
