@@ -16,7 +16,8 @@
             </div>
             <div class="card-body text-dark">
                 <h5 class="card-title" align="center">
-                    <a class="link-dark" style="text-decoration: none;" href="">{{ admin.phone }}</a>
+                    <a class="link-dark" style="text-decoration: none;" href="tel: {{ admin.phone }}">{{ admin.phone }}</a>
+                    <!-- <a href="tel:+48 123-456-789">123-456-789</a> -->
                 </h5>
             </div>
         </div>
@@ -28,7 +29,7 @@
             </div>
             <div class="card-body text-dark">
                 <h5 class="card-title" align="center">
-                  <a class="link-dark" style="text-decoration: none;" href="">{{ admin.email }}</a>
+                  <a class="link-dark" style="text-decoration: none;" href="mailto:nikolska.work@gmail.com">{{ admin.email }}</a>
                 </h5>
             </div>
         </div>
@@ -39,7 +40,9 @@
                 <img class="img-fluid contact-image" src="{% static '/img/address.png' %}" alt="address-icon">
             </div>
             <div class="card-body text-dark">
-              <h5 class="card-title" align="center">{{ admin.address }}</h5>
+                <h5 class="card-title" align="center">
+                    <a class="link-dark" style="text-decoration: none;" href="https://goo.gl/maps/E11vXn63mJePHQWB6">{{ admin.address }}</a>
+                </h5>
             </div>
         </div>
     </div>
