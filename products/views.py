@@ -1,3 +1,5 @@
+from string import digits
+
 from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMixin
 from django.contrib.auth.models import Permission
@@ -203,6 +205,15 @@ class CustomerOrdersListView(LoginRequiredMixin, ListView):
     def dispatch(self, request, *args, **kwargs):
         self.queryset = self.model.objects.filter(customer=request.user).order_by('-order_date')
         return super().dispatch(request, *args, **kwargs)
+    
+    def get_context_data(self, **kwargs):
+        ctx = super().get_context_data(**kwargs)
+        dictionary = {}
+        for key, value in self.request.session.items():
+            if key.isdigit():
+                dictionary[int(key)] = value
+        ctx['dictionary'] = dictionary
+        return ctx
 
 
 class CustomerPasswordUpdateView(LoginRequiredMixin, PermissionRequiredMixin, PasswordChangeView):
@@ -433,10 +444,14 @@ class RateProductView(View):
     def post(self, request, *args, **kwargs):
         customer_rating = request.POST.get('customer_rating')
         product = Product.objects.get(slug=kwargs.get('slug'))
-        new_rating = (product.rating + float(customer_rating)) / 2
+        new_rating = round((product.rating + float(customer_rating)) / 2, 1)
         product.rating = new_rating
+        request.session[f'{product.pk}'] = customer_rating
         product.save()
-        messages.add_message(request, messages.INFO, f'Thank you for rate {product.title}!')
+        messages.add_message(request, messages.INFO, 
+            f'Thank you for rate {product.title}! Your rating for this product is {customer_rating}.'
+        )
+        
         return HttpResponseRedirect('/account/orders/')
         
 

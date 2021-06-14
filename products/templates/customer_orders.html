@@ -17,7 +17,6 @@
                 <th scope="col">TO PAY</th>
                 <th scope="col">DELIVERY</th>
                 <th scope="col">STATUS</th>
-                <!-- <th scope="col">Actions</th> -->
             </tr>
         </thead>
         <tbody>
@@ -33,59 +32,69 @@
                                 <a class="link-dark" href="{{ product.product.get_absolute_url }}">
                                     <b>{{ product }}</b></a> ({{ product.product.price }}$)
                             </li>
-                            
                             {% if order.status == 'completed' %}
                                 <hr>
-                                <form action="{% url 'rate_product' product.product.slug %}" method="POST">
-                                    {% csrf_token %}
-                                    
-                                    <div class="form-check form-check-inline">
-                                        <input class="form-check-input" type="radio" name="customer_rating" id="inlineRadio1" value="1">
-                                        <label class="form-check-label" for="inlineRadio1">1</label>
-                                    </div>
-                                    <div class="form-check form-check-inline">
-                                        <input class="form-check-input" type="radio" name="customer_rating" id="inlineRadio2" value="2">
-                                        <label class="form-check-label" for="inlineRadio2">2</label>
-                                    </div>
-                                    <div class="form-check form-check-inline">
-                                        <input class="form-check-input" type="radio" name="customer_rating" id="inlineRadio1" value="3">
-                                        <label class="form-check-label" for="inlineRadio1">3</label>
-                                    </div>
-                                    <div class="form-check form-check-inline">
-                                        <input class="form-check-input" type="radio" name="customer_rating" id="inlineRadio2" value="4">
-                                        <label class="form-check-label" for="inlineRadio2">4</label>
-                                    </div>
-                                    <div class="form-check form-check-inline">
-                                        <input class="form-check-input" type="radio" name="customer_rating" id="inlineRadio1" value="5">
-                                        <label class="form-check-label" for="inlineRadio1">5</label>
-                                    </div>
-                                    <br>
-                                    <div class="form-check form-check-inline">
-                                        <input class="form-check-input" type="radio" name="customer_rating" id="inlineRadio2" value="6">
-                                        <label class="form-check-label" for="inlineRadio2">6</label>
-                                    </div>
-                                    <div class="form-check form-check-inline">
-                                        <input class="form-check-input" type="radio" name="customer_rating" id="inlineRadio1" value="7">
-                                        <label class="form-check-label" for="inlineRadio1">7</label>
-                                    </div>
-                                    <div class="form-check form-check-inline">
-                                        <input class="form-check-input" type="radio" name="customer_rating" id="inlineRadio2" value="8">
-                                        <label class="form-check-label" for="inlineRadio2">8</label>
-                                    </div>
-                                    <div class="form-check form-check-inline">
-                                        <input class="form-check-input" type="radio" name="customer_rating" id="inlineRadio1" value="9">
-                                        <label class="form-check-label" for="inlineRadio1">9</label>
-                                    </div>
-                                    <div class="form-check form-check-inline">
-                                        <input class="form-check-input" type="radio" name="customer_rating" id="inlineRadio2" value="10">
-                                        <label class="form-check-label" for="inlineRadio2">10</label>
-                                    </div>
+                                {% if product.product.pk in dictionary %}
+                                    {% for key, value in dictionary.items %}
+                                        {% if key == product.product.pk %}
+                                        <div class="card border-warning mb-3">
+                                            <div class="card-header">
+                                                Your rating for <b>{{ product.product }}</b> is <b>{{ value }}</b>.
+                                            </div>
+                                          </div> 
+                                        {% endif %}
+                                    {% endfor %}
+                                {% else %}
+                                    <form action="{% url 'rate_product' product.product.slug %}" method="POST">
+                                        {% csrf_token %}
+                                        
+                                        <div class="form-check form-check-inline">
+                                            <input class="form-check-input" type="radio" name="customer_rating" id="inlineRadio1" value="1">
+                                            <label class="form-check-label" for="inlineRadio1">1</label>
+                                        </div>
+                                        <div class="form-check form-check-inline">
+                                            <input class="form-check-input" type="radio" name="customer_rating" id="inlineRadio2" value="2">
+                                            <label class="form-check-label" for="inlineRadio2">2</label>
+                                        </div>
+                                        <div class="form-check form-check-inline">
+                                            <input class="form-check-input" type="radio" name="customer_rating" id="inlineRadio1" value="3">
+                                            <label class="form-check-label" for="inlineRadio1">3</label>
+                                        </div>
+                                        <div class="form-check form-check-inline">
+                                            <input class="form-check-input" type="radio" name="customer_rating" id="inlineRadio2" value="4">
+                                            <label class="form-check-label" for="inlineRadio2">4</label>
+                                        </div>
+                                        <div class="form-check form-check-inline">
+                                            <input class="form-check-input" type="radio" name="customer_rating" id="inlineRadio1" value="5">
+                                            <label class="form-check-label" for="inlineRadio1">5</label>
+                                        </div>
+                                        <br>
+                                        <div class="form-check form-check-inline">
+                                            <input class="form-check-input" type="radio" name="customer_rating" id="inlineRadio2" value="6">
+                                            <label class="form-check-label" for="inlineRadio2">6</label>
+                                        </div>
+                                        <div class="form-check form-check-inline">
+                                            <input class="form-check-input" type="radio" name="customer_rating" id="inlineRadio1" value="7">
+                                            <label class="form-check-label" for="inlineRadio1">7</label>
+                                        </div>
+                                        <div class="form-check form-check-inline">
+                                            <input class="form-check-input" type="radio" name="customer_rating" id="inlineRadio2" value="8">
+                                            <label class="form-check-label" for="inlineRadio2">8</label>
+                                        </div>
+                                        <div class="form-check form-check-inline">
+                                            <input class="form-check-input" type="radio" name="customer_rating" id="inlineRadio1" value="9">
+                                            <label class="form-check-label" for="inlineRadio1">9</label>
+                                        </div>
+                                        <div class="form-check form-check-inline">
+                                            <input class="form-check-input" type="radio" name="customer_rating" id="inlineRadio2" value="10">
+                                            <label class="form-check-label" for="inlineRadio2">10</label>
+                                        </div>
 
-                                    <input type="submit" class="btn btn-outline-info mt-2" value="&#x272C; RATE THE PRODUCT &#x272C;">
-                                </form>
+                                        <input type="submit" class="btn btn-outline-info mt-2" value="&#x272C; RATE THE PRODUCT &#x272C;">
+                                    </form>
+                                {% endif %}
                                 <hr>
                             {% endif %}
-                        
                         {% endfor %}
                     </td>
                     <td class="text-center">{{ order.cart.final_price }}$</td>
