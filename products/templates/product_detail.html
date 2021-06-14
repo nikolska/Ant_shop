@@ -105,11 +105,84 @@
     <div class="mt-2 mb-4">
       <p class="mt-2 mb-2" align="justify"><b>Description:</b> {{ product.description|linebreaks }}</p>
     </div>
-    <hr>
+    {% if related_products %}
+      <hr style="width: 95%;">
+      <h4 style="color: grey;"><b>Related products</b></h4>
+      <hr style="width: 95%;">
+      <div>
+        {% for product in related_products %}
+          <div class="card mb-3" style="max-width: 690px;">
+            <div class="row g-0">
+              <div class="col-md-4 pe-0">
+                <a href="{% url 'product_detail' product.category.category.slug product.category.slug product.slug %}">
+                    <img class="img-fluid img-thumbnail mt-3" src="{{ product.image.url }}" alt="product-{{ product.title }}-image"/>
+                </a>
+              </div>
+              <div class="col-md-8 ps-0">
+                <div class="card-body pb-1">
+                  <div style="display: flex; justify-content: space-between;">
+                    <h5 class="card-title">{{ product.title }}</h5>
+                    <h5 style="color: red"><b>{{ product.price }}$</b></h5>
+                  </div>
+                  <hr style="margin: 0%;">
+                  <div style="display:flex; justify-content:space-between; align-items:center;">
+                    <small class="text-muted">
+                        {{ product.rating }}
+                        {% if product.rating <= 2 %}
+                            ★ ☆ ☆ ☆ ☆
+                        {% elif product.rating <= 3 %}
+                            ★ &#x272D; ☆ ☆ ☆
+                        {% elif product.rating <= 4 %}
+                            ★ ★ ☆ ☆ ☆
+                        {% elif product.rating <= 5 %}
+                            ★ ★ &#x272D; ☆ ☆
+                        {% elif product.rating <= 6 %}
+                            ★ ★ ★ ☆ ☆
+                        {% elif product.rating <= 7 %}
+                            ★ ★ ★ &#x272D; ☆
+                        {% elif product.rating <= 8 %}
+                            ★ ★ ★ ★ ☆
+                        {% elif product.rating <= 9 %}
+                            ★ ★ ★ ★ &#x272D;
+                        {% else %}
+                            ★ ★ ★ ★ ★
+                        {% endif %}
+                    </small>
+                    {% if product in wishlist.products.all %}
+                        <a class="position-relative" style="text-decoration: none;" 
+                            href="{% url 'delete_from_wishlist' product.slug %}">
+                            <button class="btn btn-sm btn-outline-warning mt-1" style="border-color: rgb(245, 243, 243);">
+                                <span>&#11088;</span>
+                            </button>
+                        </a> 
+                    {% else %} 
+                        <a class="position-relative" style="text-decoration: none;" 
+                            href="{% url 'add_to_wishlist' product.slug %}">
+                            <button class="btn btn-sm btn-outline-warning mt-1" style="border-color: rgb(245, 243, 243);">
+                                <span style="font-size:150%;color:black;">&#9734;</span>
+                            </button>
+                        </a> 
+                    {% endif %}
+                </div>
+                {% if product.availability %}
+                <a class="position-relative" href="{% url 'add_to_cart' product.slug %}">
+                    <button class="btn btn-sm btn-outline-secondary mb-2">Add to cart</button>
+                </a>
+              {% else %}
+                <p class="text-muted">The product is currently out of stock.</p>
+              {% endif %}
+                </div>
+              </div>
+            </div>
+          </div>
+        {% endfor %}
+      </div>
+    {% endif %}
     <div class="my-2">
-      <h5>Comments</h5> 
+      <hr>
+      <h4 style="color: grey;"><b>Comments</b></h4>
+      <hr> 
     </div>
-    <hr>
     <div class="mt-2 mb-4">
       {% if comments %}
         {% for comment in comments %}
@@ -143,7 +216,9 @@
           </div>
         {% endfor %}
       {% else %}
-        <h4>No comments found! Be the first!</h4>
+        <div class="card border-danger mb-3" style="max-width: 18rem;">
+          <div class="card-body">No comments found! Be the first!</div>
+        </div>
       {% endif %}
     </div>
     <div class="mt-2 mb-4">
@@ -152,7 +227,7 @@
         {{ form|crispy }}
         <input type="submit" value="Comment">
       </form>
-    </div>
+    </div>  
 </div>
 
 {% endblock %}

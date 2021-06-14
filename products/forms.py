@@ -11,7 +11,8 @@ class CommentForm(forms.ModelForm):
         model = Comment
         fields = ['comment_text', 'rating']
         labels = {
-            'comment_text': 'Your comment'
+            'comment_text': 'Your comment',
+            'rating': 'Rating (from 1 to 10)'
         }
     
     def clean(self):

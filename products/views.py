@@ -390,23 +390,35 @@ class ProductDetailView(DetailView, FormView):
 
     def get_context_data(self, **kwargs):
         comments = Comment.objects.filter(product=self.object)
+        related_products = Product.objects.filter(category=self.object.category).exclude(slug=self.object.slug)[:3]
         ctx = super().get_context_data(**kwargs)
         ctx['comments'] = comments
+        ctx['related_products'] = related_products
         return ctx
-    
-    def form_valid(self, form, **kwargs):
-        comment_text = form.cleaned_data['comment_text']
-        rating = form.cleaned_data['rating']
 
-        if not self.request.user.is_anonymous:    
-            Comment.objects.create(
-                product=self.get_object(), author=self.request.user,
-                comment_text=comment_text, rating=rating
-            )
+    def post(self, request, *args, **kwargs):
+        form = CommentForm(request.POST)
+        if form.is_valid():
+            comment_text = form.cleaned_data['comment_text']
+            rating = form.cleaned_data['rating']
+
+            if not self.request.user.is_anonymous:    
+                Comment.objects.create(
+                    product=self.get_object(), author=self.request.user,
+                    comment_text=comment_text, rating=rating
+                )
+            else:
+                Comment.objects.create(product=self.get_object(), comment_text=comment_text, rating=rating)
+
+            self.object = self.get_object()
+            ctx = self.get_context_data(**kwargs)
+            ctx['form'] = form
+            return self.render_to_response(context=ctx)
         else:
-            Comment.objects.create(product=self.get_object(), comment_text=comment_text, rating=rating)
-        
-        return HttpResponseRedirect(self.request.META.get('HTTP_REFERER'))
+            self.object = self.get_object()
+            ctx = self.get_context_data(**kwargs)
+            ctx['form'] = form
+            return self.render_to_response(context=ctx)
 
 
 class ProductListView(ListView):
