@@ -72,7 +72,7 @@
                                 <div class="d-grid gap-2 col-11 mx-auto">
                                     {% for subcategory in subcategory_list %}
                                         <input class="btn btn-outline-secondary btn-sm my-1" style="width: 170px;" 
-                                            type="submit" name="sorting" value="{{ subcategory }}">
+                                            type="submit" name="category_sorting" value="{{ subcategory }}">
                                     {% endfor %}
                                 </div>
                             </form>
@@ -83,6 +83,61 @@
                         {{ search_form.search }}
                         <input type="image" class="img-fluid icon" src="{% static '/img/search-icon.png' %}"/>
                     </form>
+                    {% if subcategory_list %}
+                        <form action="" method="GET" class="mt-2">
+                            <div class="mb-3">
+                                {{ sort_form.sorting }} 
+                                <div align="center" class="mb-3">
+                                    <button name='reset_s' class="btn btn-outline-secondary mt-2">Reset sort</button>
+                                    <input type="submit" class="btn btn-outline-secondary mt-2" value="Sort">
+                                </div>
+                            </div>
+                        </form>
+                        <form action="" method="GET" class="mt-2">
+                            <div class="accordion" id="accordionPanelsStayOpenExample">
+                                <div class="accordion-item">
+                                  <h2 class="accordion-header" id="panelsStayOpen-headingOne">
+                                    <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#panelsStayOpen-collapseOne" aria-expanded="true" aria-controls="panelsStayOpen-collapseOne">
+                                      Price
+                                    </button>
+                                  </h2>
+                                  <div id="panelsStayOpen-collapseOne" class="accordion-collapse collapse show" aria-labelledby="panelsStayOpen-headingOne">
+                                    <div class="accordion-body">
+                                        {{ filter_form.price_from }} - {{ filter_form.price_to }}
+                                    </div>
+                                  </div>
+                                </div>
+                                <div class="accordion-item">
+                                  <h2 class="accordion-header" id="panelsStayOpen-headingTwo">
+                                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#panelsStayOpen-collapseTwo" aria-expanded="false" aria-controls="panelsStayOpen-collapseTwo">
+                                      Rating
+                                    </button>
+                                  </h2>
+                                  <div id="panelsStayOpen-collapseTwo" class="accordion-collapse collapse" aria-labelledby="panelsStayOpen-headingTwo">
+                                    <div class="accordion-body">
+                                        {{ filter_form.rating_from }} - {{ filter_form.rating_to }}
+                                    </div>
+                                  </div>
+                                </div>
+                                <div class="accordion-item">
+                                  <h2 class="accordion-header" id="panelsStayOpen-headingThree">
+                                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#panelsStayOpen-collapseThree" aria-expanded="false" aria-controls="panelsStayOpen-collapseThree">
+                                      Avalible
+                                    </button>
+                                  </h2>
+                                  <div id="panelsStayOpen-collapseThree" class="accordion-collapse collapse" aria-labelledby="panelsStayOpen-headingThree">
+                                    <div class="accordion-body">
+                                        {{ filter_form.availability }}
+                                    </div>
+                                  </div>
+                                </div>
+                            </div>
+                            <div align="center" class="mb-3">
+                                <button name='reset_f' class="btn btn-outline-secondary mt-2">Reset all filters</button>
+                                <input type="submit" class="btn btn-outline-secondary mt-2" value="Filter">
+                            </div>
+                        </form>
+                    {% endif %}
                 </div>
                 <div class="col-lg-8">
                     {% if messages %}

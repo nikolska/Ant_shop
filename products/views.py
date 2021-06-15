@@ -1,4 +1,4 @@
-from string import digits
+from decimal import Decimal
 
 from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMixin
@@ -7,12 +7,10 @@ from django.contrib.auth.views import PasswordChangeView
 from django.contrib.messages.views import SuccessMessageMixin
 from django.core.mail import mail_admins, send_mail
 from django.db import models, transaction
-from django.forms.forms import Form
 from django.http import HttpResponseRedirect
 from django.shortcuts import render
 from django.urls import reverse_lazy
 from django.views.generic import DetailView, FormView, ListView, TemplateView, UpdateView, View
-from django.views.generic.edit import CreateView
 
 from .forms import CommentForm, ContactForm, CustomerCreateForm, CustomerUpdateForm, InformForm, OrderForm
 from .models import Cart, CartProduct, Category, Comment, Customer, Order, Product, Subcategory, Wish_List
@@ -444,12 +442,54 @@ class ProductListView(ListView):
         return ctx
     
     def get_queryset(self):
-        if self.request.GET.get('sorting'):
-            sort = self.request.GET.get('sorting')
+        if self.request.GET.get('category_sorting'):
+            sort = self.request.GET.get('category_sorting')
             category = Subcategory.objects.get(name=sort)
             queryset = self.model.objects.filter(category=category)  
             return queryset
-        return self.queryset
+
+        product_sorting = self.request.GET.get('sorting')
+        
+        if product_sorting == '1':
+            queryset = self.queryset.order_by('-rating')
+            return queryset
+        elif product_sorting == '2':
+            queryset = self.queryset.order_by('price')
+            return queryset
+        elif product_sorting == '3':
+            queryset = self.queryset.order_by('-price')
+            return queryset
+        elif product_sorting == '4':
+            queryset = self.queryset.order_by('-creation_date')
+            return queryset
+
+        price_from = self.request.GET.get('price_from')
+        price_to = self.request.GET.get('price_to')
+        rating_from = self.request.GET.get('rating_from')
+        rating_to = self.request.GET.get('rating_to')
+        avalible = self.request.GET.get('availability')
+
+        max_price = Product.objects.aggregate(models.Max('price'))
+        
+        price_from = Decimal(price_from) if price_from else 0.0
+        price_to = Decimal(price_to) if price_to else max_price.get('price__max')
+        rating_from = float(rating_from) if rating_from else 0
+        rating_to = float(rating_to) if rating_to else 10
+        
+        queryset = self.queryset.filter(
+                price__range=(price_from, price_to),
+                rating__range=(rating_from, rating_to),
+            )
+
+        if avalible == '1':
+            queryset = self.queryset.filter(availability=True)
+        elif avalible == '2':
+            queryset = self.queryset.filter(availability=False)
+        
+        if self.request.GET.get('reset_f') or self.request.GET.get('reset_s'):
+            return self.queryset
+
+        return queryset
 
 
 class ProductSearchView(View):

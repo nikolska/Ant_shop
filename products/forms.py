@@ -2,8 +2,24 @@ import re
 from datetime import datetime, timedelta
 
 from django import forms
+from django.core.exceptions import ValidationError
+from django.forms.widgets import Select
 
 from .models import Comment, Customer, Order
+
+
+def validate_price(price):
+    if price.isdigit():
+        price = float(price)
+        if price < 0:
+            raise ValidationError(f'Price - {price} - is not valid!')
+
+
+def validate_rating(rating):
+    if rating.isdigit():
+        rating = float(rating)
+        if rating < 0 or rating > 10:
+            raise ValidationError(f'Rating - {rating} - is not valid!')
 
 
 class CommentForm(forms.ModelForm):
@@ -113,6 +129,59 @@ class OrderForm(forms.ModelForm):
             self.add_error('order_date', 'Please, check the correct date!')
 
 
+class ProductFilterForm(forms.Form):
+    price_from = forms.FloatField(
+        required=False,
+        validators=[validate_price],
+        min_value=0,
+        widget=forms.TextInput(attrs={'size': 6, 'class': 'form-label'})
+    )
+    price_to = forms.FloatField(
+        required=False,
+        validators=[validate_price],
+        min_value=0,
+        widget=forms.TextInput(attrs={'size': 6, 'class': 'form-label'})
+    )
+    rating_from = forms.FloatField(
+        required=False,
+        validators=[validate_rating],
+        min_value=0,
+        max_value=10,
+        widget=forms.TextInput(attrs={'size': 6, 'class': 'form-label'})
+    )
+    rating_to = forms.FloatField(
+        required=False,
+        validators=[validate_rating],
+        min_value=0,
+        max_value=10,
+        widget=forms.TextInput(attrs={'size': 6, 'class': 'form-label'})
+    )
+    availability = forms.ChoiceField(
+        choices=([
+            ("1", "Yes"),
+            ("2", "No"),
+            ("3", "All products"),
+        ]), 
+        initial='3',
+        widget=forms.RadioSelect(attrs={'class': 'form-label no-bullet-list'})
+    )
+
+
 class ProductSearchForm(forms.Form):
     search = forms.CharField(widget=forms.TextInput(attrs={'placeholder': 'search product...'}))
+
+
+PRODUCT_SORTING_CHOICES = (
+    ('1', 'Popularity'),
+    ('2', 'Price ascending'),
+    ('3', 'Price descending'),
+    ('4', 'New products'),
+)
+
+class ProductSortForm(forms.Form):
+    sorting = forms.ChoiceField(
+        required=False,
+        choices=PRODUCT_SORTING_CHOICES,
+        widget=Select(attrs={'class': 'form-select'})
+    )
 
