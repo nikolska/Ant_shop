@@ -452,6 +452,15 @@ class ProductListView(ListView):
         return self.queryset
 
 
+class ProductSearchView(View):
+    def get(self, request, *args, **kwargs):
+        if self.request.GET.get('search'):
+            search = self.request.GET.get('search')
+            products = Product.objects.filter(title__icontains=search)
+            ctx = {'products': products}
+            return render(request, 'product_search.html', ctx)
+
+
 class RateProductView(View):
     def post(self, request, *args, **kwargs):
         customer_rating = request.POST.get('customer_rating')

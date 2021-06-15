@@ -9,7 +9,8 @@ from .views import (
     ContactView, CustomerAccountView, CustomerCreateView, CustomerDataUpdateView,
     CustomerOrdersListView,CustomerPasswordUpdateView, DeleteFromCartView,
     DeleteFromWishListView, HomePageView, InformCustomerView, MakeOrderView, 
-    OrderView, ProductDetailView, ProductListView, RateProductView, WishListView
+    OrderView, ProductDetailView, ProductListView, ProductSearchView, RateProductView, 
+    WishListView
 )
 
 
@@ -40,6 +41,7 @@ urlpatterns = [
     re_path(r'^order/$', OrderView.as_view(), name='order_form'),
     re_path(r'^remove-from-cart/(?P<slug>[-\w]+)/$', DeleteFromCartView.as_view(), name='delete_from_cart'),
     re_path(r'^remove-from-wish-list/(?P<slug>[-\w]+)/$', DeleteFromWishListView.as_view(), name='delete_from_wishlist'),
+    path('products/search/', ProductSearchView.as_view(), name='product_search'),
     re_path(
         r'^products/(?P<category>[-\w]+)/(?P<subcategory>[-\w]+)/(?P<slug>[-\w]+)/$', 
         ProductDetailView.as_view(), 

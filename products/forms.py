@@ -112,3 +112,7 @@ class OrderForm(forms.ModelForm):
         if cleaned_data['order_date'] < (datetime.today().date() + timedelta(days=2)) or cleaned_data['order_date'].weekday() > 4:
             self.add_error('order_date', 'Please, check the correct date!')
 
+
+class ProductSearchForm(forms.Form):
+    search = forms.CharField(widget=forms.TextInput(attrs={'placeholder': 'search product...'}))
+

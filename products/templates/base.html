@@ -56,7 +56,7 @@
                     <h1 class="my-4">
                         <a href="{% url 'home_page' %}" style="color: rgb(36, 36, 36); text-decoration: none;">Ant Shop</a>
                     </h1>
-                    <div class="list-group mb-4">
+                    <div class="list-group">
                         {% for category in categories %}
                             <div class="btn-group dropright m-1">
                                 <a href="{% url 'product_list' category.slug %}">  
@@ -66,8 +66,8 @@
                                 </a> 
                             </div>
                         {% endfor %}
+                        <hr>
                         {% if subcategory_list %}
-                            <hr>
                             <form method="GET">
                                 <div class="d-grid gap-2 col-11 mx-auto">
                                     {% for subcategory in subcategory_list %}
@@ -76,8 +76,13 @@
                                     {% endfor %}
                                 </div>
                             </form>
+                            <hr>
                         {% endif %}
                     </div>
+                    <form action="{% url 'product_search' %}" method="GET" class="ps-1" style="display: flex; align-items: center;">
+                        {{ search_form.search }}
+                        <input type="image" class="img-fluid icon" src="{% static '/img/search-icon.png' %}"/>
+                    </form>
                 </div>
                 <div class="col-lg-8">
                     {% if messages %}
