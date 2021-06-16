@@ -137,6 +137,33 @@
                                 <input type="submit" class="btn btn-outline-secondary mt-2" value="Filter">
                             </div>
                         </form>
+                    {% else %}
+                        {% if top_products %}
+                            <hr>
+                            <div class="ps-3">
+                                <h3 class="mb-3 ps-3" style="color: grey;"><b>Top Products</b></h3>
+                                {% for product in top_products %}
+                                    <div class="card mb-2" style="width: 12rem;">
+                                        <a href="{% url 'product_detail' product.category.category.slug product.category.slug product.slug %}">
+                                            <img class="card-img-top" style="padding: 10%;" src="{{ product.image.url }}" alt="product-{{ product.title }}-image"/>
+                                        </a>
+                                        <div class="md-2">
+                                            <h5 class="card-title text-center">
+                                                <a style="color: black;" href="{{ product.get_absolute_url }}">
+                                                    {{ product.title }}
+                                                </a>
+                                            </h5>
+                                        </div>
+                                        <div class="card-footer" style="display:flex; justify-content:space-between; align-items:center;">
+                                            <h6 style="color: red"><b>{{ product.price }}$</b></h6>
+                                            <a class="position-relative" href="{% url 'add_to_cart' product.slug %}">
+                                                <button class="btn btn-outline-secondary btn-sm mb-2">Add to cart</button>
+                                            </a>
+                                        </div>
+                                    </div>
+                                {% endfor %}
+                            </div>
+                        {% endif %}
                     {% endif %}
                 </div>
                 <div class="col-lg-8">

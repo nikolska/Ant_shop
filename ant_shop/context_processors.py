@@ -13,6 +13,7 @@ def base_page_info(request):
         'search_form': ProductSearchForm,
         'sort_form': ProductSortForm,
         'subcategories': Subcategory.objects.all(),
+        'top_products': Product.objects.filter(availability=True).order_by('-rating')[:3],
         'wishlist': get_customer_wishlist(request),
     }
     return ctx
