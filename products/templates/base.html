@@ -68,14 +68,17 @@
                         {% endfor %}
                         <hr>
                         {% if subcategory_list %}
-                            <form method="GET">
+                            <!-- <form method="GET"> -->
                                 <div class="d-grid gap-2 col-11 mx-auto">
                                     {% for subcategory in subcategory_list %}
-                                        <input class="btn btn-outline-secondary btn-sm my-1" style="width: 170px;" 
-                                            type="submit" name="category_sorting" value="{{ subcategory }}">
+                                        <a href="{% url 'product_list2' subcategory.category.slug subcategory.slug %}">
+                                            <button class="btn btn-outline-secondary btn-sm my-1" style="width: 170px;">
+                                                {{ subcategory }}
+                                            </button>
+                                        </a>
                                     {% endfor %}
                                 </div>
-                            </form>
+                            <!-- </form> -->
                             <hr>
                         {% endif %}
                     </div>

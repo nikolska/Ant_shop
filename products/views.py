@@ -7,7 +7,7 @@ from django.contrib.auth.views import PasswordChangeView
 from django.contrib.messages.views import SuccessMessageMixin
 from django.core.mail import mail_admins, send_mail
 from django.db import models, transaction
-from django.http import HttpResponseRedirect
+from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import render
 from django.urls import reverse_lazy
 from django.views.generic import DetailView, FormView, ListView, TemplateView, UpdateView, View
@@ -41,6 +41,12 @@ def get_customer_wishlist(request):
         if not wishlist:
             wishlist = Wish_List.objects.create(owner=customer)
     return wishlist
+
+
+def get_subcategory_list(category_slug):
+    category = Category.objects.get(slug=category_slug)
+    subcategory_list = Subcategory.objects.filter(category=category)
+    return subcategory_list
 
 
 def recalc_cart(cart):
@@ -425,29 +431,80 @@ class ProductListView(ListView):
     template_name = 'product_list.html'
     slug_url_kwarg = 'slug'
 
-    def get_subcategory_list(self, category_slug):
-        category = Category.objects.get(slug=category_slug)
-        subcategory_list = Subcategory.objects.filter(category=category)
-        return subcategory_list
-
     def dispatch(self, request, *args, **kwargs):
-        subcategory_list = self.get_subcategory_list(kwargs['category'])
+        subcategory_list = get_subcategory_list(kwargs['category'])
         self.queryset = self.model.objects.filter(category__in=subcategory_list)
         return super().dispatch(request, *args, **kwargs)
     
     def get_context_data(self, **kwargs):
-        subcategory_list = self.get_subcategory_list(self.kwargs['category'])
+        subcategory_list = get_subcategory_list(self.kwargs['category'])
         ctx = super().get_context_data(**kwargs)
         ctx['subcategory_list'] = subcategory_list
         return ctx
     
     def get_queryset(self):
-        if self.request.GET.get('category_sorting'):
-            sort = self.request.GET.get('category_sorting')
-            category = Subcategory.objects.get(name=sort)
-            queryset = self.model.objects.filter(category=category)  
+        product_sorting = self.request.GET.get('sorting')
+        
+        if product_sorting == '1':
+            queryset = self.queryset.order_by('-rating')
+            return queryset
+        elif product_sorting == '2':
+            queryset = self.queryset.order_by('price')
+            return queryset
+        elif product_sorting == '3':
+            queryset = self.queryset.order_by('-price')
+            return queryset
+        elif product_sorting == '4':
+            queryset = self.queryset.order_by('-creation_date')
             return queryset
 
+        price_from = self.request.GET.get('price_from')
+        price_to = self.request.GET.get('price_to')
+        rating_from = self.request.GET.get('rating_from')
+        rating_to = self.request.GET.get('rating_to')
+        avalible = self.request.GET.get('availability')
+
+        max_price = Product.objects.aggregate(models.Max('price'))
+        
+        price_from = Decimal(price_from) if price_from else 0.0
+        price_to = Decimal(price_to) if price_to else max_price.get('price__max')
+        rating_from = float(rating_from) if rating_from else 0
+        rating_to = float(rating_to) if rating_to else 10
+        
+        queryset = self.queryset.filter(
+                price__range=(price_from, price_to),
+                rating__range=(rating_from, rating_to),
+            )
+
+        if avalible == '1':
+            queryset = self.queryset.filter(availability=True)
+        elif avalible == '2':
+            queryset = self.queryset.filter(availability=False)
+        
+        if self.request.GET.get('reset_f') or self.request.GET.get('reset_s'):
+            return self.queryset
+
+        return queryset
+
+
+class Product2ListView(ListView):
+    model = Product
+    paginate_by = 30
+    template_name = 'product_list2.html'
+    slug_url_kwarg = 'slug'
+
+    def dispatch(self, request, *args, **kwargs):
+        catedory = Subcategory.objects.get(slug=kwargs['subcategory'])
+        self.queryset = self.model.objects.filter(category=catedory)
+        return super().dispatch(request, *args, **kwargs)
+    
+    def get_context_data(self, **kwargs):
+        subcategory_list = get_subcategory_list(self.kwargs['category'])
+        ctx = super().get_context_data(**kwargs)
+        ctx['subcategory_list'] = subcategory_list
+        return ctx
+    
+    def get_queryset(self):
         product_sorting = self.request.GET.get('sorting')
         
         if product_sorting == '1':
