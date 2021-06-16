@@ -266,7 +266,7 @@ class InformCustomerView(FormView):
         subject = f"Message from AntShop customer to inform about {product} avalibility"
         message = f'''
             Hello, I'm your customer from AntShop WebSite. Please, inform me {email} about 
-            <a href="https://ant-shop.herokuapp.com/products/{product.get_absolute_url()}/">{product}</a> avalibility.
+            https://ant-shop.herokuapp.com/products/{product.get_absolute_url()} {product} avalibility.
         '''
 
         mail_admins(subject, message, fail_silently=False)
