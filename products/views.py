@@ -51,11 +51,12 @@ def get_subcategory_list(category_slug):
 
 def recalc_cart(cart):
     cart_data = cart.products.aggregate(models.Sum('final_price'), models.Sum('qty'))
-    if cart_data.get('final_price__sum'):
+    if cart_data.get('final_price__sum') and cart_data['qty__sum']:
         cart.final_price = cart_data['final_price__sum']
+        cart.total_products = cart_data['qty__sum']
     else:
         cart.final_price = 0
-    cart.total_products = cart_data['qty__sum']
+        cart.total_products = 0      
     cart.save()
 
 
@@ -234,6 +235,7 @@ class DeleteFromCartView(View):
     def get(self, request, *args, **kwargs):
         cart = get_customer_cart(request)
         product = Product.objects.get(slug=kwargs.get('slug'))
+        # breakpoint()
         cart_product = CartProduct.objects.get(
             product=product,
             customer=cart.owner,
