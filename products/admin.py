@@ -32,7 +32,7 @@ class CartProductAdmin(admin.ModelAdmin):
 class CategoryAdmin(admin.ModelAdmin):
     list_display = ('name', 'slug')
     search_fields = ('name',)
-
+    prepopulated_fields = {'slug': ('name',)}
 
 
 class CommentAdmin(admin.ModelAdmin):
@@ -136,6 +136,7 @@ class ProductAdmin(admin.ModelAdmin):
     form = ProductAdminForm
     list_display = ('title', 'category', 'price', 'code', 'rating', 'availability', 'qty', 'get_small_image')
     list_filter = ('availability', ProductCategoryFilter, 'category', 'rating')
+    prepopulated_fields = {'slug': ('title',)}
     search_fields = ('title',)
     readonly_fields = ('get_image',)
 
@@ -153,6 +154,7 @@ class SubcategoryAdmin(admin.ModelAdmin):
     list_display = ('name', 'slug', 'category')
     list_filter = ('category',)
     search_fields = ('name',)
+    prepopulated_fields = {'slug': ('name',)}
 
 
 class Wish_ListAdmin(admin.ModelAdmin):
